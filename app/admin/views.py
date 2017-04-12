@@ -1,5 +1,7 @@
 from flask import abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
+from flask_mail import Message
+from app.__init__ import mail
 
 from . import admin
 from forms import DepartmentForm, EmployeeAssignForm, RoleForm
@@ -11,6 +13,18 @@ def check_admin():
     # prevent non-admins from accessing the page
     if not current_user.is_admin:
         abort(403)
+
+
+@admin.route("/mail")
+@login_required
+def send_mail():
+
+    msg = Message("Hello",
+                  recipients=["kelly.mark.76@gmail.com"])
+
+    mail.send(msg)
+    return "sent"
+
 
 
 # Department Views

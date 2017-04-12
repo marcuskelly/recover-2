@@ -6,22 +6,37 @@ from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
+#  from app import app
 
 # local imports
 from config import app_config
 
 db = SQLAlchemy()
 login_manager = LoginManager()
+mail = Mail()
 
 
 def create_app(config_name):
     if os.getenv('FLASK_CONFIG') == "production":
         app = Flask(__name__)
+        #  app.config.from_object(__name__)
         app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
+        app.config.update(dict(
+            MAIL_SERVER = 'smtp.gmail.com',
+            MAIL_PORT = 587,
+            MAIL_USE_SSL = False,
+            MAIL_USE_TLS = True,
+            MAIL_USERNAME = 'addictionhelphere@gmail.com',
+            MAIL_PASSWORD = 'd43nk654',
+            MAIL_DEFAULT_SENDER = '"Recover" <noreply@gmail.com>'
+        ))
         app.config.update(
             SECRET_KEY=os.getenv('SECRET_KEY'),
             SQLALCHEMY_DATABASE_URI=os.getenv('SQLALCHEMY_DATABASE_URI')
         )
+        mail.init_app(app)
+        #  mail = Mail(app)
     else:
         app = Flask(__name__, instance_relative_config=True)
         app.config.from_object(app_config[config_name])
@@ -33,6 +48,7 @@ def create_app(config_name):
     login_manager.login_message = "You must be logged in to access this page."
     login_manager.login_view = "auth.login"
     migrate = Migrate(app, db)
+
 
     from app import models
 

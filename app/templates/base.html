@@ -12,7 +12,6 @@
     <!-- Bootstrap CSS and JS -->
     <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/metisMenu.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/morris.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/font-awesome.css') }}" rel="stylesheet">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -23,11 +22,11 @@
     <![endif]-->
 
     <!-- Application specific CSS-->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}"> -->
 
     <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <!-- <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"> -->
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
 </head>
 <body>
@@ -95,18 +94,18 @@
     <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
 
     <!-- Bootstrap JS -->
-    <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script> -->
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
 
     <!-- Metis Menu Plugin JavaScript -->
-    <script src="{{ url_for('static', filename='bootstrap/js/metisMenu.min.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='bootstrap/js/metisMenu.min.js') }}"></script> -->
 
     <!-- Morris Charts JavaScript
     <script src="{{ url_for('static', filename='bootstrap/js/raphael.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap/js/morris.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap/js/morris-data.js') }}"></script>-->
 
-    <!-- Custom Theme JavaScript -->
-    <script src="{{ url_for('static', filename='bootstrap/js/custom.js') }}"></script>
+    <!-- Custom Theme JavaScript
+    <script src="{{ url_for('static', filename='bootstrap/js/custom.js') }}"></script> -->
 </body>
 </html>
