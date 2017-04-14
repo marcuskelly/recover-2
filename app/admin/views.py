@@ -1,7 +1,11 @@
 from flask import abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
-from flask_mail import Message
-from app.__init__ import mail
+#  from flask_mail import Message
+#  from app.__init__ import mail
+
+import sendgrid
+import os
+from sendgrid.helpers.mail import *
 
 from . import admin
 from forms import DepartmentForm, EmployeeAssignForm, RoleForm
@@ -19,10 +23,23 @@ def check_admin():
 @login_required
 def send_mail():
 
+    sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
+    from_email = Email("addictionhelp365@gmail.com")
+    to_email = Email("c00198041@itcarlow.ie")
+    subject = "Please work"
+    content = Content("text/plain", "If you are reading this.. It fucking worked!!!!. I'm using a service called sendgrid. It's done with an API as opposed to smtp. It's $10 a month, but I get first month free. p.s. let me know if you get this please")
+    mail = Mail(from_email, subject, to_email, content)
+    response = sg.client.mail.send.post(request_body=mail.get())
+    print(response.status_code)
+    print(response.body)
+    print(response.headers)
+
+    """
     msg = Message("Hello",
                   recipients=["kelly.mark.76@gmail.com"])
 
     mail.send(msg)
+    """
     return "sent"
 
 
