@@ -489,7 +489,7 @@ p.copyright {
 }
 
 .content-section {
-    padding: 50px 0;
+    padding: 25px 0;
     border-top: 1px solid #e7e7e7;
 }
 
@@ -544,7 +544,7 @@ p.copyright {
   height: auto !important;
   height: 100%;
   margin: 0 auto -4em;
-  padding: 50px;
+  padding: 50px 0 0 0;
 }
 
 .outer {

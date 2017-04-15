@@ -27,8 +27,8 @@ def create_app(config_name):
             MAIL_PORT = 587,
             MAIL_USE_SSL = False,
             MAIL_USE_TLS = True,
-            MAIL_USERNAME = 'addictionhelp365@gmail.com',
-            MAIL_PASSWORD = 'd43nk654',
+            MAIL_USERNAME = os.environ.get('MAIL_USERNAME'),
+            MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD'),
             MAIL_DEFAULT_SENDER = '"Recover" <noreply@gmail.com>'
         ))
         app.config.update(

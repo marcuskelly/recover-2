@@ -27,7 +27,7 @@ def send_mail():
     from_email = Email("addictionhelp365@gmail.com")
     to_email = Email("c00198041@itcarlow.ie")
     subject = "Please work"
-    content = Content("text/plain", "If you are reading this.. It fucking worked!!!!. I'm using a service called sendgrid. It's done with an API as opposed to smtp. It's $10 a month, but I get first month free. p.s. let me know if you get this please")
+    content = Content("text/plain", "If you are reading this.. It worked!!!!")
     mail = Mail(from_email, subject, to_email, content)
     response = sg.client.mail.send.post(request_body=mail.get())
     print(response.status_code)

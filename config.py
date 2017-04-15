@@ -20,19 +20,7 @@ class ProductionConfig(Config):
     """
 
     DEBUG = False
-    """
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 587
-    MAIL_USE_SSL = False
-    MAIL_USE_TLS = True
-    MAIL_USERNAME = 'addictionhelp365@gmail.com'
-    MAIL_PASSWORD = 'd43nk654'
-    MAIL_DEFAULT_SENDER = '"Recover" <noreply@gmail.com>'
 
-    ADMINS = [
-        '"Admin One" <kelly.mark.76@gmail.com>',
-        ]
-    """
 
 class TestingConfig(Config):
     """
