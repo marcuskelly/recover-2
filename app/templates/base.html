@@ -14,6 +14,11 @@
     <link href="{{ url_for('static', filename='css/metisMenu.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/morris.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/font-awesome.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/toastr.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/toastr.js') }}"></script>
+
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -45,10 +50,10 @@
               <ul class="nav navbar-nav navbar-right">
                   {% if current_user.is_authenticated %}
                     {% if current_user.is_admin %}
-                      <li><a href="{{ url_for('home.admin_dashboard') }}">Dashboard</a></li>
-                      <li><a href="{{ url_for('admin.list_departments') }}">Departments</a></li>
-                      <li><a href="{{ url_for('admin.list_roles') }}">Roles</a></li>
-                      <li><a href="{{ url_for('admin.list_employees') }}">Patients</a></li>
+                      <li><a href="{{ url_for('home.doctor_dashboard') }}">Dashboard</a></li>
+                      <li><a href="{{ url_for('doctor.list_departments') }}">Departments</a></li>
+                      <li><a href="{{ url_for('doctor.list_roles') }}">Roles</a></li>
+                      <li><a href="{{ url_for('doctor.list_employees') }}">Patients</a></li>
                     {% else %}
                       <li><a href="{{ url_for('home.dashboard') }}">Dashboard</a></li>
                     {% endif %}
@@ -63,6 +68,37 @@
           </div>
         </div>
     </nav>
+
+    {%- with messages = get_flashed_messages(with_categories=true) -%}
+        {% if messages %}
+         {% for category, message in messages %}
+            <script type="text/javascript">
+                (function() {
+                  toastr.options = {
+                    positionClass: 'toast-center-center',
+                    "fadeIn": 300,
+                    "fadeOut": 1000,
+                    "timeOut": 3000
+                  };
+                  switch ('{{ category }}') {
+                    case 'error':
+                        toastr.error('{{ message }}', 'Recover');
+                        break;
+                    case 'warning':
+                        toastr.warning('{{ message }}', 'Recover');
+                        break;
+                    case 'success':
+                        toastr.success('{{ message }}', 'Recover');
+                        break;
+                    default:
+                        toastr.info('{{ message }}', 'Recover');
+                }
+                }).call(this);
+            </script>
+          {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     <div class="wrapper">
       {% block body %}
       {% endblock %}

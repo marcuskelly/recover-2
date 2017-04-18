@@ -7,7 +7,7 @@ import sendgrid
 import os
 from sendgrid.helpers.mail import *
 
-from . import admin
+from . import doctor
 from forms import DepartmentForm, EmployeeAssignForm, RoleForm
 from .. import db
 from ..models import Department, Employee, Role
@@ -19,7 +19,7 @@ def check_admin():
         abort(403)
 
 
-@admin.route("/mail")
+@doctor.route("/mail")
 @login_required
 def send_mail():
 
@@ -47,7 +47,7 @@ def send_mail():
 # Department Views
 
 
-@admin.route('/departments', methods=['GET', 'POST'])
+@doctor.route('/departments', methods=['GET', 'POST'])
 @login_required
 def list_departments():
     """
@@ -57,11 +57,11 @@ def list_departments():
 
     departments = Department.query.all()
 
-    return render_template('admin/departments/departments.html',
+    return render_template('doctor/departments/departments.html',
                            departments=departments, title="Departments")
 
 
-@admin.route('/departments/add', methods=['GET', 'POST'])
+@doctor.route('/departments/add', methods=['GET', 'POST'])
 @login_required
 def add_department():
     """
@@ -85,15 +85,15 @@ def add_department():
             flash('Error: department name already exists.')
 
         # redirect to departments page
-        return redirect(url_for('admin.list_departments'))
+        return redirect(url_for('doctor.list_departments'))
 
     # load department template
-    return render_template('admin/departments/department.html', action="Add",
+    return render_template('doctor/departments/department.html', action="Add",
                            add_department=add_department, form=form,
                            title="Add Department")
 
 
-@admin.route('/departments/edit/<int:id>', methods=['GET', 'POST'])
+@doctor.route('/departments/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_department(id):
     """
@@ -112,16 +112,16 @@ def edit_department(id):
         flash('You have successfully edited the department.')
 
         # redirect to the departments page
-        return redirect(url_for('admin.list_departments'))
+        return redirect(url_for('doctor.list_departments'))
 
     form.description.data = department.description
     form.name.data = department.name
-    return render_template('admin/departments/department.html', action="Edit",
+    return render_template('doctor/departments/department.html', action="Edit",
                            add_department=add_department, form=form,
                            department=department, title="Edit Department")
 
 
-@admin.route('/departments/delete/<int:id>', methods=['GET', 'POST'])
+@doctor.route('/departments/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete_department(id):
     """
@@ -135,7 +135,7 @@ def delete_department(id):
     flash('You have successfully deleted the department.')
 
     # redirect to the departments page
-    return redirect(url_for('admin.list_departments'))
+    return redirect(url_for('doctor.list_departments'))
 
     return render_template(title="Delete Department")
 
@@ -143,7 +143,7 @@ def delete_department(id):
 # Role Views
 
 
-@admin.route('/roles')
+@doctor.route('/roles')
 @login_required
 def list_roles():
     check_admin()
@@ -151,11 +151,11 @@ def list_roles():
     List all roles
     """
     roles = Role.query.all()
-    return render_template('admin/roles/roles.html',
+    return render_template('doctor/roles/roles.html',
                            roles=roles, title='Roles')
 
 
-@admin.route('/roles/add', methods=['GET', 'POST'])
+@doctor.route('/roles/add', methods=['GET', 'POST'])
 @login_required
 def add_role():
     """
@@ -180,14 +180,14 @@ def add_role():
             flash('Error: role name already exists.')
 
         # redirect to the roles page
-        return redirect(url_for('admin.list_roles'))
+        return redirect(url_for('doctor.list_roles'))
 
     # load role template
-    return render_template('admin/roles/role.html', add_role=add_role,
+    return render_template('doctor/roles/role.html', add_role=add_role,
                            form=form, title='Add Role')
 
 
-@admin.route('/roles/edit/<int:id>', methods=['GET', 'POST'])
+@doctor.route('/roles/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_role(id):
     """
@@ -207,15 +207,15 @@ def edit_role(id):
         flash('You have successfully edited the role.')
 
         # redirect to the roles page
-        return redirect(url_for('admin.list_roles'))
+        return redirect(url_for('doctor.list_roles'))
 
     form.description.data = role.description
     form.name.data = role.name
-    return render_template('admin/roles/role.html', add_role=add_role,
+    return render_template('doctor/roles/role.html', add_role=add_role,
                            form=form, title="Edit Role")
 
 
-@admin.route('/roles/delete/<int:id>', methods=['GET', 'POST'])
+@doctor.route('/roles/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete_role(id):
     """
@@ -229,14 +229,14 @@ def delete_role(id):
     flash('You have successfully deleted the role.')
 
     # redirect to the roles page
-    return redirect(url_for('admin.list_roles'))
+    return redirect(url_for('doctor.list_roles'))
 
     return render_template(title="Delete Role")
 
 
 # Employee Views
 
-@admin.route('/employees')
+@doctor.route('/employees')
 @login_required
 def list_employees():
     """
@@ -245,11 +245,11 @@ def list_employees():
     check_admin()
 
     employees = Employee.query.all()
-    return render_template('admin/employees/employees.html',
+    return render_template('doctor/employees/employees.html',
                            employees=employees, title='Employees')
 
 
-@admin.route('/employees/assign/<int:id>', methods=['GET', 'POST'])
+@doctor.route('/employees/assign/<int:id>', methods=['GET', 'POST'])
 @login_required
 def assign_employee(id):
     """
@@ -272,8 +272,8 @@ def assign_employee(id):
         flash('You have successfully assigned a department and role.')
 
         # redirect to the roles page
-        return redirect(url_for('admin.list_employees'))
+        return redirect(url_for('doctor.list_employees'))
 
-    return render_template('admin/employees/employee.html',
+    return render_template('doctor/employees/employee.html',
                            employee=employee, form=form,
                            title='Assign Employee')

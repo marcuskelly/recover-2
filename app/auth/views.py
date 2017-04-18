@@ -20,7 +20,7 @@ def register():
         # add employee to the database
         db.session.add(employee)
         db.session.commit()
-        flash('You have successfully registered! You may now login.')
+        flash('You have successfully registered! You may now login.', 'success')
 
         # redirect to the login page
         return redirect(url_for('auth.login'))
@@ -42,15 +42,16 @@ def login():
             # log employee in
             login_user(employee)
 
+            flash('You have successfully been logged in.', 'success')
             # redirect to the appropriate dashboard page
             if employee.is_admin:
-                return redirect(url_for('home.admin_dashboard'))
+                return redirect(url_for('home.doctor_dashboard'))
             else:
                 return redirect(url_for('home.dashboard'))
 
         # when login details are incorrect
         else:
-            flash('Invalid email or password.')
+            flash('Invalid email or password.', 'error')
 
     # load login template
     return render_template('auth/login.html', form=form, title='Login')
@@ -60,7 +61,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('You have successfully been logged out.')
+    flash('You have successfully been logged out.', 'success')
 
     # redirect to the login page
     return redirect(url_for('auth.login'))
