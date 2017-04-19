@@ -49,15 +49,15 @@
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav navbar-right">
                   {% if current_user.is_authenticated %}
-                    {% if current_user.is_admin %}
+                    {% if current_user.is_doctor %}
                       <li><a href="{{ url_for('home.doctor_dashboard') }}">Dashboard</a></li>
-                      <li><a href="{{ url_for('doctor.list_departments') }}">Departments</a></li>
-                      <li><a href="{{ url_for('doctor.list_roles') }}">Roles</a></li>
-                      <li><a href="{{ url_for('doctor.list_employees') }}">Patients</a></li>
+                      <li><a href="#">Questionnaires</a></li>
+                      <li><a href="{{ url_for('doctor.list_notifications') }}">Notifications</a></li>
+                      <li><a href="{{ url_for('doctor.list_patients') }}">Patients</a></li>
                     {% else %}
                       <li><a href="{{ url_for('home.dashboard') }}">Dashboard</a></li>
                     {% endif %}
-                    <li><a><i class="fa fa-user"></i>  Hi, {{ current_user.username }}!</a></li>
+                    <li><a><i class="fa fa-user"></i>  Hello {{ current_user.username }}</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
                   {% else %}
                     <li><a href="{{ url_for('home.homepage') }}">Home</a></li>
@@ -75,7 +75,7 @@
             <script type="text/javascript">
                 (function() {
                   toastr.options = {
-                    positionClass: 'toast-center-center',
+                    positionClass: 'toast-top-left',
                     "fadeIn": 300,
                     "fadeOut": 1000,
                     "timeOut": 3000

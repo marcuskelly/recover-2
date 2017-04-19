@@ -4,21 +4,21 @@ from flask_login import login_required, login_user, logout_user
 from . import auth
 from forms import LoginForm, RegistrationForm
 from .. import db
-from ..models import Employee
+from ..models import User
 
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        employee = Employee(email=form.email.data,
+        user = User(email=form.email.data,
                             username=form.username.data,
                             first_name=form.first_name.data,
                             last_name=form.last_name.data,
                             password=form.password.data)
 
         # add employee to the database
-        db.session.add(employee)
+        db.session.add(user)
         db.session.commit()
         flash('You have successfully registered! You may now login.', 'success')
 
@@ -36,15 +36,15 @@ def login():
 
         # check whether employee exists in the database and whether
         # the password entered matches the password in the database
-        employee = Employee.query.filter_by(email=form.email.data).first()
-        if employee is not None and employee.verify_password(
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is not None and user.verify_password(
                 form.password.data):
             # log employee in
-            login_user(employee)
+            login_user(user)
 
             flash('You have successfully been logged in.', 'success')
             # redirect to the appropriate dashboard page
-            if employee.is_admin:
+            if user.is_doctor:
                 return redirect(url_for('home.doctor_dashboard'))
             else:
                 return redirect(url_for('home.dashboard'))

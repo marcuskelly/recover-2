@@ -8,16 +8,54 @@ import os
 from sendgrid.helpers.mail import *
 
 from . import doctor
-from forms import DepartmentForm, EmployeeAssignForm, RoleForm
+#  from forms import DepartmentForm, EmployeeAssignForm, RoleForm
 from .. import db
-from ..models import Department, Employee, Role
-
+#  from ..models import Department, Employee, Role
+from ..models import User
 
 def check_admin():
     # prevent non-admins from accessing the page
     if not current_user.is_admin:
         abort(403)
 
+
+def check_doctor():
+    # prevent non-doctors from accessing the page
+    if not current_user.is_doctor:
+        abort(403)
+
+
+# Patient Views
+
+@doctor.route('/patients')
+@login_required
+def list_patients():
+    """
+    List all patients
+    """
+    check_doctor()
+
+    #  users = User.query.all()
+    return render_template('doctor/patients/patients.html', title='Patients')
+
+
+# Notification Views
+
+@doctor.route('/notifications')
+@login_required
+def list_notifications():
+    """
+    List all notifications
+    """
+    check_doctor()
+
+    return render_template('doctor/notifications/notifications.html',
+                            title='Notifications')
+
+
+
+
+# Mail send test
 
 @doctor.route("/mail")
 @login_required
@@ -26,7 +64,7 @@ def send_mail():
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
     from_email = Email("addictionhelp365@gmail.com")
     to_email = Email("c00198041@itcarlow.ie")
-    subject = "Please work"
+    subject = "Test subject"
     content = Content("text/plain", "If you are reading this.. It worked!!!!")
     mail = Mail(from_email, subject, to_email, content)
     response = sg.client.mail.send.post(request_body=mail.get())
@@ -43,16 +81,16 @@ def send_mail():
     return "sent"
 
 
-
+"""
 # Department Views
 
 
 @doctor.route('/departments', methods=['GET', 'POST'])
 @login_required
 def list_departments():
-    """
-    List all departments
-    """
+
+    #  List all departments
+
     check_admin()
 
     departments = Department.query.all()
@@ -64,9 +102,9 @@ def list_departments():
 @doctor.route('/departments/add', methods=['GET', 'POST'])
 @login_required
 def add_department():
-    """
-    Add a department to the database
-    """
+
+    #  Add a department to the database
+
     check_admin()
 
     add_department = True
@@ -96,9 +134,9 @@ def add_department():
 @doctor.route('/departments/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_department(id):
-    """
-    Edit a department
-    """
+
+    #  Edit a department
+
     check_admin()
 
     add_department = False
@@ -124,9 +162,9 @@ def edit_department(id):
 @doctor.route('/departments/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete_department(id):
-    """
-    Delete a department from the database
-    """
+
+    #  Delete a department from the database
+
     check_admin()
 
     department = Department.query.get_or_404(id)
@@ -147,9 +185,9 @@ def delete_department(id):
 @login_required
 def list_roles():
     check_admin()
-    """
-    List all roles
-    """
+
+    #  List all roles
+
     roles = Role.query.all()
     return render_template('doctor/roles/roles.html',
                            roles=roles, title='Roles')
@@ -158,9 +196,9 @@ def list_roles():
 @doctor.route('/roles/add', methods=['GET', 'POST'])
 @login_required
 def add_role():
-    """
-    Add a role to the database
-    """
+
+    # Add a role to the database
+
     check_admin()
 
     add_role = True
@@ -190,9 +228,9 @@ def add_role():
 @doctor.route('/roles/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_role(id):
-    """
-    Edit a role
-    """
+
+    #  Edit a role
+
     check_admin()
 
     add_role = False
@@ -218,9 +256,9 @@ def edit_role(id):
 @doctor.route('/roles/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete_role(id):
-    """
-    Delete a role from the database
-    """
+
+    #  Delete a role from the database
+
     check_admin()
 
     role = Role.query.get_or_404(id)
@@ -239,9 +277,9 @@ def delete_role(id):
 @doctor.route('/employees')
 @login_required
 def list_employees():
-    """
-    List all employees
-    """
+
+    #  List all employees
+
     check_admin()
 
     employees = Employee.query.all()
@@ -252,9 +290,9 @@ def list_employees():
 @doctor.route('/employees/assign/<int:id>', methods=['GET', 'POST'])
 @login_required
 def assign_employee(id):
-    """
-    Assign a department and a role to an employee
-    """
+
+    #  Assign a department and a role to an employee
+
     check_admin()
 
     employee = Employee.query.get_or_404(id)
@@ -277,3 +315,5 @@ def assign_employee(id):
     return render_template('doctor/employees/employee.html',
                            employee=employee, form=form,
                            title='Assign Employee')
+
+"""
