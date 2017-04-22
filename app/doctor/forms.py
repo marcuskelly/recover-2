@@ -1,12 +1,26 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField,TextAreaField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import DataRequired
 
+#  from ..models import Department, Role
+
+
+# Questionnaire forms
+
+class CreateQuestionnaireForm(FlaskForm):
+
+    #  Form to create questionnaire
+
+    title = StringField('Title', validators=[DataRequired()])
+    subject = StringField('Subject', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+
+
 """
-from ..models import Department, Role
-
-
 class DepartmentForm(FlaskForm):
 
     #  Form for admin to add or edit a department

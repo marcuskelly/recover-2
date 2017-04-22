@@ -1,22 +1,16 @@
-from flask import abort, flash, redirect, render_template, url_for
+from flask import g, request, abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
-#  from flask_mail import Message
-#  from app.__init__ import mail
+from datetime import datetime
 
 import sendgrid
 import os
 from sendgrid.helpers.mail import *
 
 from . import doctor
-#  from forms import DepartmentForm, EmployeeAssignForm, RoleForm
 from .. import db
-#  from ..models import Department, Employee, Role
-from ..models import User
-
-def check_admin():
-    # prevent non-admins from accessing the page
-    if not current_user.is_admin:
-        abort(403)
+from ..models import User, Questionnaire, QuesAnswer, ProbAnswer, Release
+from forms import CreateQuestionnaireForm
+import pickle
 
 
 def check_doctor():
@@ -52,6 +46,120 @@ def list_notifications():
     return render_template('doctor/notifications/notifications.html',
                             title='Notifications')
 
+
+#  Questionnaire views
+
+@doctor.route('/questionnaires')
+@login_required
+def list_questionnaires():
+
+    check_doctor()
+
+    #  users = User.query.all()
+    return render_template('doctor/questionnaire/questionnaire.html',
+                            title='Questionnaires')
+
+
+@doctor.route('/questionnaires/create', methods = ['GET', 'POST'])
+@login_required
+def create_questionnaire():
+
+    check_doctor()
+
+    form = CreateQuestionnaireForm()
+
+    if form.validate_on_submit():
+        q = Questionnaire(title=form.title.data,
+                    subject=form.subject.data,
+                    description=form.description.data)
+
+        # add questionnaire to the database
+        db.session.add(q)
+        db.session.commit()
+        flash('You have successfully added the questionnaire.', 'success')
+
+        # redirect
+        return redirect(url_for('doctor.create_question',q_id=q.id))
+
+
+    #  users = User.query.all()
+    return render_template('doctor/questionnaire/questionnaire_create.html',
+                            form=form,
+                            title='Questionnaires')
+
+
+@doctor.route('/questionnaires/<int:q_id>/create_question', methods=['GET', 'POST'])
+@login_required
+def create_question(q_id):
+
+    check_doctor()
+
+    def get_questions():
+        questions = []
+        current_index = 0
+        while True:
+            ques_form = 'ques_' + str(current_index)  #example: ques_1
+            if ques_form+'.type' in request.form:
+                current_question = {
+                                    "type": request.form[ques_form + '.type'],  #example:ques_7.type
+                                    "description": request.form[ques_form + '.description'],    #example:ques_9.description
+                                    "options": get_options(ques_form)
+                                   }
+                questions.append(current_question)
+                current_index += 1
+            else: break
+        return questions
+
+    def get_options(ques_form):
+        options = []
+        option_index = 0
+        while True:
+            option = ques_form + '.option_' + str(option_index)  #example: ques_3.option_3 'C.wow'
+            if option in request.form:
+                options.append(request.form[option])
+                option_index += 1
+            else: break
+        return options
+
+    q = Questionnaire.query.get(q_id)
+    if not q:
+        return "ERROR!"
+    if request.method == 'POST':
+        questions = get_questions()
+        dumped_questions = pickle.dumps(questions, protocol = 2)
+        q.schema = dumped_questions
+        q.create_time = datetime.now()
+        q.author_id = current_user.id
+
+        db.session.add(q)
+        db.session.commit()
+        flash('You have successfully added the questions to the questionnaire.', 'success')
+        return render_template('doctor/questionnaire/questionnaire.html',
+                title='Questionnaires')
+
+    return render_template('doctor/questionnaire/questionnaire_create_question.html',
+                            title='Create question')
+
+
+@doctor.route('/questionnaire/<int:q_id>/preview')
+@login_required
+def preview(q_id):
+    q = Questionnaire.query.get(q_id)
+    if not q:
+        return "ERROR!"
+
+    if q.get_status() == 'Banned':
+        return render_template('message.html',
+                message = 'Sorry, the questionnaire is banned')
+
+    schema = pickle.loads(q.schema)
+    return render_template('doctor/questionnaire/questionnaire_preview.html',
+            g = g,
+            id = q.id,
+            schema = schema,
+            title = q.title,
+            subject = q.subject,
+            description = q.description)
 
 
 

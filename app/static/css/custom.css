@@ -1,4 +1,6 @@
-
+* {
+    box-sizing: border-box;
+}
 #wrapper {
   width: 100%;
 }
@@ -451,8 +453,12 @@ a:hover, .navbar-default .navbar-brand:hover, .navbar-default .navbar-nav>li>a:h
 
 footer {
     padding: 25px 0;
-    background-color: #f8f8f8;
     border-top: 1px solid #e7e7e7;
+    background: #f8f8f8; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(#f8f8f8, #ffffff); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#f8f8f8, #ffffff); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#f8f8f8, #ffffff); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#f8f8f8, #ffffff); /* Standard syntax (must be last) */
 }
 
 p.copyright {
@@ -477,6 +483,11 @@ p.copyright {
     color: white;
 }
 
+.btn-default:active {
+    background-color: #337ab7;
+    color: white;
+}
+
 .center {
     margin: auto;
     width: 50%;
@@ -486,6 +497,11 @@ p.copyright {
 .forms {
     margin: auto;
     width: 18em;
+}
+
+.doctor-forms {
+    margin: auto;
+    width: 100%;
 }
 
 .content-section {
@@ -562,5 +578,21 @@ p.copyright {
 .inner {
     margin-left: auto;
     margin-right: auto;
+}
+
+.chart {
+    width: 95%;
+    display: block;
+    margin: 0 auto;
+}
+
+#barchart_div {
+    width: 90%;
+    display: block;
+    margin: 0 auto;
+}
+
+#ques_list {
+
 }
 

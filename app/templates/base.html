@@ -10,7 +10,8 @@
     <title>{{ title }} | Recover</title>
 
     <!-- Bootstrap CSS and JS -->
-    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">  -->
     <link href="{{ url_for('static', filename='css/metisMenu.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/morris.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/font-awesome.css') }}" rel="stylesheet">
@@ -18,21 +19,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/toastr.js') }}"></script>
 
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="{{ url_for('static', filename='bootstrap/js/html5shiv.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='bootstrap/js/respond.min.js') }}"></script>
-    <![endif]-->
-
     <!-- Application specific CSS-->
     <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}"> -->
 
-    <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    {% block head %}
+    {% endblock %}
 </head>
 <body>
     <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
@@ -51,7 +44,7 @@
                   {% if current_user.is_authenticated %}
                     {% if current_user.is_doctor %}
                       <li><a href="{{ url_for('home.doctor_dashboard') }}">Dashboard</a></li>
-                      <li><a href="#">Questionnaires</a></li>
+                      <li><a href="{{ url_for('doctor.list_questionnaires') }}">Questionnaires</a></li>
                       <li><a href="{{ url_for('doctor.list_notifications') }}">Notifications</a></li>
                       <li><a href="{{ url_for('doctor.list_patients') }}">Patients</a></li>
                     {% else %}
@@ -75,7 +68,7 @@
             <script type="text/javascript">
                 (function() {
                   toastr.options = {
-                    positionClass: 'toast-top-left',
+                    positionClass: 'toast-center-center',
                     "fadeIn": 300,
                     "fadeOut": 1000,
                     "timeOut": 3000

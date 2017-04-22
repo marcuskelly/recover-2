@@ -1,20 +1,20 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}Questionnaire{% endblock %}
 {% block body %}
 <div class="content-section">
     <div class="container">
         <div class="row">
-            <div class="col-sm-4"></div>
-            <div class="col-sm-4">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
                 <div class="doctor-forms">
-                    <h1>Login to your account</h1>
+                    <h1>Create questionnaire</h1>
                     <br/>
                     {{ wtf.quick_form(form) }}
                     <br/>
                 </div>
             </div>
-            <div class="col-sm-4"></div>
+            <div class="col-sm-3"></div>
         </div>
     </div>
 </div>
