@@ -55,8 +55,9 @@ def list_questionnaires():
 
     check_doctor()
 
-    #  users = User.query.all()
+    questionnaires = Questionnaire.query.all()
     return render_template('doctor/questionnaire/questionnaire.html',
+                            questionnaires=questionnaires,
                             title='Questionnaires')
 
 
@@ -133,9 +134,37 @@ def create_question(q_id):
 
         db.session.add(q)
         db.session.commit()
-        flash('You have successfully added the questions to the questionnaire.', 'success')
-        return render_template('doctor/questionnaire/questionnaire.html',
-                title='Questionnaires')
+
+        def get_security():
+            def to_int(string):
+                try: return int(string)
+                except ValueError: return None
+
+            security = {}
+
+            is_allow_anonymous = False
+            limit_num_participants = None
+            limit_num_ip = None
+            special_participants = None
+
+            security['anonymous'] = is_allow_anonymous
+            security['limit_per_user'] = limit_num_participants
+            security['limit_per_ip'] = limit_num_ip
+            security['limit_participants'] = special_participants
+
+            return security
+
+        security = get_security()
+        dumped_security = pickle.dumps(security, protocol = 2)
+        release = Release(ques_id = q_id,
+            start_time =datetime.now(),
+            security = dumped_security,
+            is_closed = False)
+        db.session.add(release)
+        db.session.commit()
+        flash('You have successfully created the questionnaire.', 'success')
+
+        return redirect(url_for('doctor.list_questionnaires'))
 
     return render_template('doctor/questionnaire/questionnaire_create_question.html',
                             title='Create question')

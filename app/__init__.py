@@ -55,8 +55,9 @@ def create_app(config_name):
     from .doctor import doctor as doctor_blueprint
     app.register_blueprint(doctor_blueprint, url_prefix='/doctor')
 
-    from .questionnaire import questionnaire as questionnaire_blueprint
-    app.register_blueprint(questionnaire_blueprint, url_prefix='/doctor')
+    from .patient import patient as patient_blueprint
+    app.register_blueprint(patient_blueprint)
+
 
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)

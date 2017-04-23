@@ -49,6 +49,7 @@
                       <li><a href="{{ url_for('doctor.list_patients') }}">Patients</a></li>
                     {% else %}
                       <li><a href="{{ url_for('home.dashboard') }}">Dashboard</a></li>
+                      <li><a href="questionnaires/17/fill">Questionnaire</a></li>
                     {% endif %}
                     <li><a><i class="fa fa-user"></i>  Hello {{ current_user.username }}</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
@@ -75,16 +76,16 @@
                   };
                   switch ('{{ category }}') {
                     case 'error':
-                        toastr.error('{{ message }}', 'Recover');
+                        toastr.error('{{ message }}');
                         break;
                     case 'warning':
-                        toastr.warning('{{ message }}', 'Recover');
+                        toastr.warning('{{ message }}');
                         break;
                     case 'success':
-                        toastr.success('{{ message }}', 'Recover');
+                        toastr.success('{{ message }}');
                         break;
                     default:
-                        toastr.info('{{ message }}', 'Recover');
+                        toastr.info('{{ message }}');
                 }
                 }).call(this);
             </script>

@@ -123,7 +123,7 @@ class Release(db.Model):
 
     def get_status(self):
         current_time = datetime.now()
-        if current_time >= self.start_time and current_time <= self.end_time and not self.is_closed:
+        if not self.is_closed:
             return True
         else:
             return False
