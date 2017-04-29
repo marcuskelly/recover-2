@@ -3,6 +3,7 @@ from flask_login import current_user, login_required
 
 from . import home
 
+from ..models import User
 
 @home.route('/')
 def homepage():
@@ -25,7 +26,14 @@ def dashboard():
 @login_required
 def doctor_dashboard():
     # prevent non-admins from accessing the page
-    if not current_user.is_admin:
+    if not current_user.is_doctor:
         abort(403)
 
-    return render_template('home/doctor_dashboard.html', title="Dashboard")
+    number_of_patients = User.query.filter_by(doctor_id=current_user.id).count()
+
+    return render_template('home/doctor_dashboard.html',
+                            number_of_patients=number_of_patients,
+                            title="Dashboard")
+
+
+

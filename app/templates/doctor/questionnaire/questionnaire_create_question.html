@@ -3,6 +3,11 @@
 {% block title %}Create question{% endblock %}
 {% block head %}
     <script type="text/javascript" src="{{ url_for('static', filename='js/new_questionnaire.js') }}"></script>
+    <script type="text/javascript">
+        window.onload = function() {
+          add_question(0);
+        };
+    </script>
 {% endblock %}
 {% block body %}
 <div class="content-section">

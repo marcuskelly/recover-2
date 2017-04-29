@@ -1,4 +1,4 @@
-from flask import g, request, abort, flash, redirect, render_template, url_for
+from flask import g, request, abort, flash, redirect, render_template, url_for, session
 from flask_login import current_user, login_required
 from datetime import datetime
 
@@ -9,7 +9,7 @@ from sendgrid.helpers.mail import *
 from . import doctor
 from .. import db
 from ..models import User, Questionnaire, QuesAnswer, ProbAnswer, Release
-from forms import CreateQuestionnaireForm
+from forms import CreateQuestionnaireForm, RegistrationForm
 import pickle
 
 
@@ -24,13 +24,64 @@ def check_doctor():
 @doctor.route('/patients')
 @login_required
 def list_patients():
-    """
-    List all patients
-    """
+
     check_doctor()
 
-    #  users = User.query.all()
-    return render_template('doctor/patients/patients.html', title='Patients')
+    """
+    List all patients for the current doctor
+    """
+    patients = User.query.filter_by(doctor_id=current_user.id)
+
+    return render_template('doctor/patients/patients.html',
+                            patients=patients,
+                            title='Patients')
+
+
+@doctor.route('/patients/add', methods=['GET', 'POST'])
+@login_required
+def add_patient():
+
+    check_doctor()
+
+    #  patients = User.query.filter_by(doctor_id=current_user.id)
+
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        patient = User(email=form.email.data,
+                            username=form.username.data,
+                            first_name=form.first_name.data,
+                            last_name=form.last_name.data,
+                            password=form.password.data,
+                            is_doctor=False,
+                            doctor_id=current_user.id)
+
+        # add patient to the database
+        db.session.add(patient)
+        db.session.commit()
+        flash('You have successfully added a patient.', 'success')
+
+        # redirect to the login page
+        return redirect(url_for('doctor.list_patients'))
+
+
+    return render_template('doctor/patients/patient_add.html',
+                            form=form,
+                            title='Add Patient')
+
+
+
+@doctor.route('/patients/<int:p_id>/profile', methods=['GET', 'POST'])
+@login_required
+def patient_profile(p_id):
+
+    check_doctor()
+
+    patient = User.query.get(p_id)
+
+    return render_template('doctor/patients/patient_profile.html',
+                            patient=patient,
+                            title='Patient Profile')
+
 
 
 # Notification Views
@@ -77,7 +128,7 @@ def create_questionnaire():
         # add questionnaire to the database
         db.session.add(q)
         db.session.commit()
-        flash('You have successfully added the questionnaire.', 'success')
+        flash('Please add the questions.', 'info')
 
         # redirect
         return redirect(url_for('doctor.create_question',q_id=q.id))
@@ -99,11 +150,11 @@ def create_question(q_id):
         questions = []
         current_index = 0
         while True:
-            ques_form = 'ques_' + str(current_index)  #example: ques_1
+            ques_form = 'ques_' + str(current_index)  #  example: ques_1
             if ques_form+'.type' in request.form:
                 current_question = {
-                                    "type": request.form[ques_form + '.type'],  #example:ques_7.type
-                                    "description": request.form[ques_form + '.description'],    #example:ques_9.description
+                                    "type": request.form[ques_form + '.type'],  # example:ques_7.type
+                                    "description": request.form[ques_form + '.description'],    # example:ques_9.description
                                     "options": get_options(ques_form)
                                    }
                 questions.append(current_question)

@@ -15,14 +15,15 @@
                 		<div id="ques_{{i}}.div">
                 			<p id="ques_{{i}}.description">{{i+1}}.&nbsp;{{schema[i].description}}</p>
                 			{% if schema[i].type=='0' %}
-                			<ul style="list-style-type:none">
-                			{% for j in range(0,schema[i].options|length) %}
-                				<li>
-                					<input type="radio" name="ques_{{i}}.ans" value="{{j}}"/>
-                					{{schema[i].options[j]}}
-                				</li>
-                			{% endfor %}
-                			</ul>
+                			<div class="btn-group-vertical" data-toggle="buttons">
+                    			{% for j in range(0,schema[i].options|length) %}
+                    				<label class="btn btn-primary">
+                    					<input type="radio" name="ques_{{i}}.ans" value="{{j}}" required="true"/>
+                    					{{schema[i].options[j]}}
+                    					<span class="glyphicon glyphicon-ok"></span>
+                    				</label>
+                    			{% endfor %}
+                			</div><br><br>
                 			{% elif schema[i].type=='1' %}
                 			<ul style="list-style-type:none">
                 			{% for j in range(0,schema[i].options|length) %}
@@ -53,8 +54,8 @@
                 		</div>
                 	{% endfor %}
                 	</div>
-                	<br/><br/>
-                	<button class="btn btn-default" type="submit">
+                	<br/>
+                	<button class="btn btn-success btn-lg" type="submit">
                 		Submit
                 	</button>
                 </form>

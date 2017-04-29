@@ -31,7 +31,8 @@ def list_questionnaires():
 def fill(q_id):
     q = Questionnaire.query.get(q_id)
     if not q:
-        return "ERROR!"
+        flash('No questionnaires have been added', 'info')
+        return redirect(url_for('home.dashboard'))
 
     #begin access control
     if q.get_status() == 'Banned':
@@ -71,7 +72,7 @@ def fill(q_id):
             if questions[prob_id]['type'] in ['0','2','3']:
                 #single-selection, true/false ,or essay question
                 if ('ques_' + str(prob_id) + '.ans') not in request.form:
-                    flash('Please fill in the blank', 'error')
+                    flash('Please answer all questions', 'error')
                     return render_template('questionnaire_fill.html',
                         g = g,
                         schema = questions,

@@ -39,7 +39,7 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.verify_password(
                 form.password.data):
-            # log employee in
+            # log user in
             login_user(user)
 
             flash('You have successfully been logged in.', 'success')
@@ -54,7 +54,9 @@ def login():
             flash('Invalid email or password.', 'error')
 
     # load login template
-    return render_template('auth/login.html', form=form, title='Login')
+    return render_template('auth/login.html',
+                            form=form,
+                            title='Login')
 
 
 @auth.route('/logout')

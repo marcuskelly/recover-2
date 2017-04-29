@@ -57,12 +57,14 @@ function add_question(type){
 
   var new_question_delete=document.createElement("span");
   new_question_delete.setAttribute("class", "pull-left btn glyphicon glyphicon-trash");
+  new_question_delete.setAttribute('title','Delete question');
   new_question_delete.setAttribute("onclick","delete_question(this)");
   new_question_div_button.appendChild(new_question_delete);
 
   if (type <2) {
     var new_question_add=document.createElement("span");
     new_question_add.setAttribute("class", "pull-left btn glyphicon glyphicon-plus");
+    new_question_add.setAttribute('title','Add option');
     new_question_add.setAttribute("onclick","add_option(this,"+type+")");
     new_question_div_button.appendChild(new_question_add);
   }
@@ -80,10 +82,6 @@ function add_question(type){
     "<span class=\"btn glyphicon glyphicon-trash\" title=\"Click to delete this option\" onclick=\"delete_option(this)\"></span></div></li>"+
     "<li class=\"row\"><input class=\"col-md-7 form-control\" type=\"text\" id=\"ques_"+
     count+".option_1\" name=\"ques_"+count+".option_1\" placeholder=\"new option\" required/>"+
-    "<div class=\"col-md-5 option_button\">"+
-    "<span class=\"btn glyphicon glyphicon-trash\" title=\"Click to delete this option\" onclick=\"delete_option(this)\"></span></div></li>"+
-    "<li class=\"row\"><input class=\"col-md-7 form-control\" type=\"text\" id=\"ques_"+
-    count+".option_2\" name=\"ques_"+count+".option_2\" placeholder=\"new option\" required/>"+
     "<div class=\"col-md-5 option_button\">"+
     "<span class=\"btn glyphicon glyphicon-trash\" title=\"Click to delete this option\" onclick=\"delete_option(this)\"></span></div></li>";
   }
