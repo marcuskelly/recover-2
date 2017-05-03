@@ -467,3 +467,6 @@ p.copyright {
 .btn.active span.glyphicon {
 	opacity: 1;
 }
+.my-panel {
+    padding: 30px 15px;
+}

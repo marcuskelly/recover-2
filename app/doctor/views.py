@@ -21,7 +21,7 @@ def check_doctor():
 
 # Patient Views
 
-@doctor.route('/patients')
+@doctor.route('/patients', methods=['GET', 'POST'])
 @login_required
 def list_patients():
 
@@ -32,8 +32,27 @@ def list_patients():
     """
     patients = User.query.filter_by(doctor_id=current_user.id)
 
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        patient = User(email=form.email.data,
+                            username=form.username.data,
+                            first_name=form.first_name.data,
+                            last_name=form.last_name.data,
+                            password=form.password.data,
+                            is_doctor=False,
+                            doctor_id=current_user.id)
+
+        # add patient to the database
+        db.session.add(patient)
+        db.session.commit()
+        flash('You have successfully added a patient.', 'success')
+
+        # redirect to the login page
+        return redirect(url_for('doctor.list_patients'))
+
     return render_template('doctor/patients/patients.html',
                             patients=patients,
+                            form=form,
                             title='Patients')
 
 
@@ -60,13 +79,29 @@ def add_patient():
         db.session.commit()
         flash('You have successfully added a patient.', 'success')
 
-        # redirect to the login page
+        # redirect to the list patients page
         return redirect(url_for('doctor.list_patients'))
 
 
     return render_template('doctor/patients/patient_add.html',
                             form=form,
                             title='Add Patient')
+
+
+
+@doctor.route('/patients/<int:p_id>/remove', methods=['GET', 'POST'])
+@login_required
+def remove_patient(p_id):
+
+    check_doctor()
+
+    patient = User.query.get_or_404(p_id)
+    db.session.delete(patient)
+    db.session.commit()
+
+    flash('You have successfully removed a patient.', 'success')
+
+    return redirect(url_for('doctor.list_patients'))
 
 
 
@@ -224,9 +259,7 @@ def create_question(q_id):
 @doctor.route('/questionnaire/<int:q_id>/preview')
 @login_required
 def preview(q_id):
-    q = Questionnaire.query.get(q_id)
-    if not q:
-        return "ERROR!"
+    q = Questionnaire.query.get_or_404(q_id)
 
     if q.get_status() == 'Banned':
         return render_template('message.html',

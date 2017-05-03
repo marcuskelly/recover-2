@@ -18,6 +18,7 @@
     <link href="{{ url_for('static', filename='css/toastr.css') }}" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/toastr.js') }}"></script>
+    <script src="https://rawgit.com/saribe/eModal/master/dist/eModal.min.js"></script>
 
     <!-- Application specific CSS-->
     <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
@@ -51,7 +52,7 @@
                       <li><a href="{{ url_for('home.dashboard') }}">Dashboard</a></li>
                       <li><a href="questionnaires/35/fill">Questionnaire</a></li>
                     {% endif %}
-                    <li><a><i class="fa fa-user"></i>  Hello {{ current_user.username }}</a></li>
+                    <li><a href="{{ url_for('home.profile') }}"><i class="fa fa-user"></i>  Hello {{ current_user.username }}</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
                   {% else %}
                     <li><a href="{{ url_for('home.homepage') }}">Home</a></li>
@@ -121,21 +122,14 @@
         </div>
     </footer>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
 
     <!-- Bootstrap JS -->
-    <!-- <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script> -->
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
 
-    <!-- Metis Menu Plugin JavaScript -->
-    <!-- <script src="{{ url_for('static', filename='bootstrap/js/metisMenu.min.js') }}"></script> -->
-
-    <!-- Morris Charts JavaScript
-    <script src="{{ url_for('static', filename='bootstrap/js/raphael.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='bootstrap/js/morris.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='bootstrap/js/morris-data.js') }}"></script>-->
-
-    <!-- Custom Theme JavaScript
-    <script src="{{ url_for('static', filename='bootstrap/js/custom.js') }}"></script> -->
+    <script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+    </script>
 </body>
 </html>

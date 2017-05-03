@@ -1,0 +1,72 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block body %}
+<div class="content-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Profile</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div style="overflow-x:auto;">
+                            <table class="table table-user-information">
+                                <tbody>
+                                  <tr>
+                                    <td>First name:</td>
+                                    <td> {{ user.first_name }} </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Last name:</td>
+                                    <td> {{ user.last_name }} </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Username</td>
+                                    <td> {{ user.username }} </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Email</td>
+                                    <td> {{ user.email }} </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Date created</td>
+                                    <td> {{ user.confirmed_at }} </td>
+                                  </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-8">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Edit Profile</h3>
+                    </div>
+                    <div class="panel-body my-panel">
+                        <div class="col-sm-6">
+                            {{ wtf.quick_form(usernameForm) }}
+                            <hr style="border:0;background-color:#357ebd;height:1px;">
+                            {{ wtf.quick_form(firstnameForm) }}
+                            <hr style="border:0;background-color:#357ebd;height:1px;">
+                            {{ wtf.quick_form(lastnameForm) }}
+                            <hr style="border:0;background-color:#357ebd;height:1px;">
+                        </div>
+                        <div class="col-sm-6">
+                            {{ wtf.quick_form(emailForm) }}
+                            <hr style="border:0;background-color:#357ebd;height:1px;">
+                            {{ wtf.quick_form(updatePasswordForm) }}
+                            <hr style="border:0;background-color:#357ebd;height:1px;">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

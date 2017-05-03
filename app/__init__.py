@@ -7,7 +7,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
-#  from app import app
+from flask_sslify import SSLify
 
 # local imports
 from config import app_config
@@ -20,6 +20,7 @@ mail = Mail()
 def create_app(config_name):
     if os.getenv('FLASK_CONFIG') == "production":
         app = Flask(__name__)
+        sslify = SSLify(app)
         #  app.config.from_object(__name__)
         app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
         app.config.update(dict(

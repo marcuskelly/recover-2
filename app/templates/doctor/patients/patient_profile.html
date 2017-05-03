@@ -4,16 +4,90 @@
 <div class="content-section">
     <div class="container">
         <div class="row">
-            <div class="col-sm-2"></div>
-            <div class="col-sm-8">
-                <h1 class="text-center">Patient Profile</h1>
-                <h3>{{ patient.first_name }} {{ patient.last_name }}</h3>
-                <h3>{{ patient.email }}</h3>
-                <h3>{{ patient.confirmed_at }}</h3>
-                <hr style="border:0;background-color:#357ebd;height:1px;">
-                <h1 class="text-center">Patient Questionnaires</h1>
+            <!--<div class="col-sm-3"></div>-->
+            <div class="col-sm-4">
+                <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">Confirm you want to discharge this patient</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>You are about to discharge {{ patient.first_name }} {{ patient.last_name }}, all data for this patient will also be deleted, this procedure is irreversible.</p>
+                                <p>Do you want to proceed?</p>
+                                <p class="debug-url"></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                                <a href="remove" class="btn btn-danger btn-ok" data-toggle="tooltip" title="Are you sure?">
+                                <i class="fa fa-exclamation-triangle"></i>
+                                Remove Patient
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    $('#confirm-delete').on('show.bs.modal', function(e) {
+                        $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+
+                        $('.debug-url').html('Delete URL: <strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+                    });
+                </script>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Patient Profile</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div style="overflow-x:auto;">
+                            <table class="table table-user-information">
+                                <tbody>
+                                  <tr>
+                                    <td>First name:</td>
+                                    <td> {{ patient.first_name }} </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Last name:</td>
+                                    <td> {{ patient.last_name }} </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Username</td>
+                                    <td> {{ patient.username }} </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Email</td>
+                                    <td><a href="mailto:{{ patient.email }}">{{ patient.email }}</a></td>
+                                  </tr>
+                                  <tr>
+                                    <td>Date created</td>
+                                    <td> {{ patient.confirmed_at }} </td>
+                                  </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <a class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete">
+                        <i class="fa fa-minus"></i>
+                        Remove Patient
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Patient Report</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>body</p>
+                    </div>
+                    <div class="panel-footer">
+                        <p>footer</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

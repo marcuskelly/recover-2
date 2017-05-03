@@ -15,9 +15,7 @@
                           <th> Title </th>
                           <th> Subject </th>
                           <th> Description </th>
-                          <th> Date Created </th>
                           <th> Preview </th>
-                          <th> Modify </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -26,12 +24,8 @@
                           <td> {{ questionnaire.title }} </td>
                           <td> {{ questionnaire.subject }} </td>
                           <td> {{ questionnaire.description }} </td>
-                          <td> {{ questionnaire.create_time }} </td>
                           <td>
-                            <a class="btn btn-small btn-success btn-sm" href="questionnaire/{{ questionnaire.id }}/preview">Preview</a>
-                          </td>
-                          <td>
-                            <a class="btn btn-small btn-success btn-sm" href="#">Modify</a>
+                            <a class="btn btn-success btn-sm" href="questionnaire/{{ questionnaire.id }}/preview">Preview</a>
                           </td>
                         </tr>
                       {% endfor %}
@@ -42,12 +36,14 @@
                     <h3 class="text-center"> No questionnaires have been added. </h3>
                 {% endif %}
                 <br>
+                <!--
                 <div class="text-center">
                     <a href="{{ url_for('doctor.create_questionnaire') }}" class="btn btn-success btn-lg">
                     <i class="fa fa-plus"></i>
                     Add Questionnaire
                     </a>
                 </div>
+                -->
             </div>
             <div class="col-sm-2"></div>
         </div>
