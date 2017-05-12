@@ -9,10 +9,10 @@ from sendgrid.helpers.mail import *
 import MySQLdb
 
 
-db = MySQLdb.connect(host="",
-                     user="",
+db = MySQLdb.connect(host="recover.mysql.pythonanywhere-services.com",
+                     user="recover",
                      passwd="",
-                     db="")
+                     db="recover$recover_db")
 
 cur = db.cursor()
 
