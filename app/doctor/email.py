@@ -11,7 +11,7 @@ import MySQLdb
 
 db = MySQLdb.connect(host="recover.mysql.pythonanywhere-services.com",
                      user="recover",
-                     passwd="",
+                     passwd="secret",
                      db="recover$recover_db")
 
 cur = db.cursor()
@@ -23,7 +23,7 @@ for row in cur.fetchall():
 
 db.close()
 
-sg = sendgrid.SendGridAPIClient(apikey='')
+sg = sendgrid.SendGridAPIClient(apikey='secret')
 from_email = Email("addictionhelp365@gmail.com")
 to_email = Email("kelly.mark.76@gmail.com")
 subject = "Test subject"

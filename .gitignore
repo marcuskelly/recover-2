@@ -1,4 +1,4 @@
 .DS_Store
 *.pyc
 instance/
-/home/recover/recover-2/app/doctor/email.py
+app/doctor/email.py
