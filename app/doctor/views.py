@@ -2,8 +2,9 @@ from flask import g, request, abort, flash, redirect, render_template, url_for, 
 from flask_login import current_user, login_required
 from datetime import datetime
 
-import sendgrid
 import os
+
+import sendgrid
 from sendgrid.helpers.mail import *
 
 from . import doctor
@@ -56,39 +57,6 @@ def list_patients():
                             title='Patients')
 
 
-@doctor.route('/patients/add', methods=['GET', 'POST'])
-@login_required
-def add_patient():
-
-    check_doctor()
-
-    #  patients = User.query.filter_by(doctor_id=current_user.id)
-
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        patient = User(email=form.email.data,
-                            username=form.username.data,
-                            first_name=form.first_name.data,
-                            last_name=form.last_name.data,
-                            password=form.password.data,
-                            is_doctor=False,
-                            doctor_id=current_user.id)
-
-        # add patient to the database
-        db.session.add(patient)
-        db.session.commit()
-        flash('You have successfully added a patient.', 'success')
-
-        # redirect to the list patients page
-        return redirect(url_for('doctor.list_patients'))
-
-
-    return render_template('doctor/patients/patient_add.html',
-                            form=form,
-                            title='Add Patient')
-
-
-
 @doctor.route('/patients/<int:p_id>/remove', methods=['GET', 'POST'])
 @login_required
 def remove_patient(p_id):
@@ -112,10 +80,42 @@ def patient_profile(p_id):
     check_doctor()
 
     patient = User.query.get(p_id)
+    ques_answered = []
+    ques_ans = {}
+    for qa in patient.quesanswers:
+        ques_ans[qa.ques_id] = qa
+        ques_answered.append(ques_ans[qa.ques_id])
+
+    ques_answered_desc = list(reversed(ques_answered))
 
     return render_template('doctor/patients/patient_profile.html',
                             patient=patient,
+                            ques_ans_list = ques_answered_desc,
                             title='Patient Profile')
+
+
+@doctor.route('/patients/<int:p_id>/<int:q_id>/result', methods=['GET', 'POST'])
+@login_required
+def patient_ques_result(p_id, q_id):
+
+    check_doctor()
+
+    patient = User.query.get(p_id)
+    q = Questionnaire.query.get_or_404(35)
+    date =  QuesAnswer.query.filter_by(id=q_id).first()
+    answers = ProbAnswer.query.filter_by(ques_ans_id=q_id)
+    schema = pickle.loads(q.schema)
+
+    return render_template('doctor/patients/patient_result.html',
+                            g = g,
+                            id = q.id,
+                            schema = schema,
+                            title = q.title,
+                            subject = q.subject,
+                            description = q.description,
+                            patient = patient,
+                            answers = answers,
+                            date = date)
 
 
 
@@ -256,14 +256,10 @@ def create_question(q_id):
                             title='Create question')
 
 
-@doctor.route('/questionnaire/<int:q_id>/preview')
+@doctor.route('/questionnaire/preview')
 @login_required
-def preview(q_id):
-    q = Questionnaire.query.get_or_404(q_id)
-
-    if q.get_status() == 'Banned':
-        return render_template('message.html',
-                message = 'Sorry, the questionnaire is banned')
+def preview():
+    q = Questionnaire.query.get_or_404(35)
 
     schema = pickle.loads(q.schema)
     return render_template('doctor/questionnaire/questionnaire_preview.html',

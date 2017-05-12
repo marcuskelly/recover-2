@@ -12,7 +12,7 @@
 @media (min-width: 768px) {
   #page-wrapper {
     position: inherit;
-    margin: 0 0 0 250px;
+    margin: 0 0 0 0;
     padding: 0 5px;
     border-left: 1px solid #e7e7e7;
   }
@@ -274,12 +274,19 @@ table.dataTable thead .sorting:after {
 .panel-yellow > a:hover {
   color: #df8a13;
 }
-
 body, html {
     width: 100%;
     height: 100%;
 }
-
+/*
+html {
+  background: url(../img/Recovery-home.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+*/
 body, h1, h2, h3 {
     font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 700;
@@ -298,8 +305,12 @@ a:hover, .navbar-default .navbar-brand:hover, .navbar-default .navbar-nav>li>a:h
 }
 
 footer {
+    width: 100%;
+    height: 10em;
     padding: 25px 0;
     border-top: 1px solid #e7e7e7;
+    z-index: 10;
+    position: absolute;
     background: #f8f8f8; /* For browsers that do not support gradients */
     background: -webkit-linear-gradient(#f8f8f8, #ffffff); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(#f8f8f8, #ffffff); /* For Opera 11.1 to 12.0 */
@@ -353,7 +364,7 @@ p.copyright {
 
 .footer, .push {
   clear: both;
-  height: 2em;
+  height: 3em;
 }
 
 .intro-divider {
@@ -361,15 +372,37 @@ p.copyright {
     border-top: 1px solid #f8f8f8;
     border-bottom: 1px solid rgba(0,0,0,0.2);
 }
-
+/*
 .intro-header {
-    padding-top: 50px;
-    padding-bottom: 50px;
     text-align: center;
-    /*color: #f8f8f8;*/
-    /*background: url(../img/intro-bg.jpg) no-repeat center center;*/
-    background-size: cover;
-    height: 100%;
+    color: #f8f8f8;
+    background: url(../img/home-bg.jpg) no-repeat center center fixed;
+    background-size:100% auto;
+
+}
+*/
+#bg {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  bottom: 100%;
+  width: 200%;
+  height: 190%;
+}
+#bg img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  min-width: 50%;
+  min-height: 50%;
+}
+#welcome {
+    z-index: 10;
+    position: absolute;
+
 }
 
 .intro-message {
@@ -402,7 +435,7 @@ p.copyright {
   height: auto !important;
   height: 100%;
   margin: 0 auto -4em;
-  padding: 25px 0 0 0;
+  padding: 25px 0 25px 0;
 }
 
 .outer {
@@ -438,17 +471,15 @@ p.copyright {
 
 }
 
-.relative
-{
+.relative {
     position:relative;
     width:100%;
 }
-.btn-lm{
+.btn-lm {
     position: absolute;
     bottom: 10px;
 }
-.absolute-text
-{
+.absolute-text {
     position:absolute;
     top:0;
     font-size:24px;
@@ -470,3 +501,82 @@ p.copyright {
 .my-panel {
     padding: 30px 15px;
 }
+// Button outline style
+.btn-outline {
+    background-color: transparent;
+}
+
+.btn-primary.btn-outline {
+    color: black;
+    &:hover {
+        background-color: @btn-primary-bg;
+        border-color: @btn-primary-border;
+    }
+}
+
+.btn-success.btn-outline {
+    color: @btn-success-bg;
+    &:hover {
+      background-color: @btn-success-bg;
+          border-color: @btn-success-border;
+    }
+}
+
+.btn-info.btn-outline {
+    color: black;
+    &:hover {
+      background-color: @btn-info-bg;
+          border-color: @btn-info-border;
+    }
+}
+
+.btn-warning.btn-outline {
+    color: @btn-warning-bg;
+    &:hover {
+      background-color: @btn-warning-bg;
+          border-color: @btn-warning-border;
+    }
+}
+
+.btn-danger.btn-outline {
+    color: @btn-danger-bg;
+    &:hover {
+      background-color: @btn-danger-bg;
+          border-color: @btn-danger-border;
+    }
+}
+
+.btn-primary.btn-outline:hover,
+.btn-success.btn-outline:hover,
+.btn-info.btn-outline:hover,
+.btn-warning.btn-outline:hover,
+.btn-danger.btn-outline:hover {
+    color: #fff;
+}
+
+.blocks .btn-info {
+    font-size: 24px;
+}
+
+.blocks {border-spacing:5px;}
+
+#topBtn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 99;
+  outline: none;
+  background-color: transparent;
+  border: 1px solid #337ab7;
+  color: #337ab7;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+#topBtn:hover {
+  background-color: #337ab7;
+  color: white;
+}
+

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Patient Result{% endblock %}
+{% block head %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/new_questionnaire.js') }}"></script>
+{% endblock %}
+{% block body %}
+<div class="content-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                <h1>[{{subject}}] {{title}}</h1>
+                <h3>Patient Name: {{ patient.first_name }} {{ patient.last_name }}</h3>
+                <h3>Date Answered: {{ date.date.strftime("%c") }}</h3>
+                <hr style="border:0;background-color:#337ab7;height:1px;">
+                <form method="POST">
+                	<div id="ques_list">
+                	{% for i in range(0,schema|length) %}
+                		<div>
+                			<p id="ques_{{i}}.description">{{i+1}}.&nbsp;{{ schema[i].description }}</p>
+                            {% if answers[i].ans == '0' %}
+                            <p class="text-primary">{{ schema[i].options[0] }}</p>
+        					{% else %}
+        					<p class="text-primary">{{ schema[i].options[1] }}</p>
+        					{% endif %}
+                		</div><br><br>
+                	{% endfor %}
+                	</div>
+            	</form>
+            	<button type="button" class="btn btn-primary" onclick="window.history.back()">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                Back
+                </button>
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,5 +1,7 @@
 from flask import abort, render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_required
+import os
+import random
 
 from . import home
 from .. import db
@@ -21,7 +23,11 @@ def dashboard():
     """
     Render the dashboard template on the /dashboard route
     """
-    return render_template('home/dashboard.html', title="Dashboard")
+    quote = get_quote()
+
+    return render_template('home/dashboard.html',
+                            quote=quote,
+                            title="Dashboard")
 
 
 @home.route('/doctor/dashboard')
@@ -117,4 +123,18 @@ def profile():
                             updatePasswordForm=updatePasswordForm,
                             user=user,
                             title="Profile")
+
+
+def get_quote():
+    quotes = []
+    with open('/home/recover/recover-2/app/quotes.txt') as quote_file:
+        for line in quote_file:
+            quote = line.strip()
+            #  quote = line.split('.')
+            print(quote)
+            quotes.append(quote)
+
+    return random.choice(quotes)
+
+
 

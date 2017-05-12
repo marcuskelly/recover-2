@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Forbidden{% endblock %}
 {% block body %}
-<div class="intro-header">
     <div class="container">
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 text-center"><br><br><br>
                 <h1> 403 Error </h1>
                 <h3> You do not have sufficient permissions to access this page. </h3><br>
                 <a href="{{ url_for('home.homepage') }}" class="btn btn-default btn-lg">
@@ -12,7 +12,7 @@
                     Home
                 </a>
             </div>
+            <div class="col-sm-4"></div>
         </div>
     </div>
-</div>
 {% endblock %}

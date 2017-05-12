@@ -7,12 +7,12 @@ from ..models import User
 
 class RegistrationForm(FlaskForm):
     """
-    Form for users to create new account
+    Form for doctors to create new account
     """
-    email = StringField('Email', validators=[DataRequired(), Email()])
     username = StringField('Username', validators=[DataRequired()])
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('Last Name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[
                                         DataRequired(),
                                         EqualTo('confirm_password')

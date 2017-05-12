@@ -14,54 +14,52 @@
                 	{% for i in range(0,schema|length) %}
                 		<div id="ques_{{i}}.div">
                 			<p id="ques_{{i}}.description">{{i+1}}.&nbsp;{{schema[i].description}}</p>
-                			{% if schema[i].type=='0' %}
-                			<div class="btn-group-vertical" data-toggle="buttons">
+                			<div class="btn-group-lg btn-group-justified blocks" data-toggle="buttons">
                     			{% for j in range(0,schema[i].options|length) %}
-                    				<label class="btn btn-primary">
+                    				<label class="btn btn-info btn-outline">
                     					<input type="radio" name="ques_{{i}}.ans" value="{{j}}" required="true"/>
                     					{{schema[i].options[j]}}
                     					<span class="glyphicon glyphicon-ok"></span>
                     				</label>
                     			{% endfor %}
                 			</div><br><br>
-                			{% elif schema[i].type=='1' %}
-                			<ul style="list-style-type:none">
-                			{% for j in range(0,schema[i].options|length) %}
-                				<li>
-                					<input type="checkbox" name="ques_{{i}}.ans_{{j}}" value="1"/>
-                					{{schema[i].options[j]}}
-                				</li>
-                			{% endfor %}
-                			</ul>
-                			{% elif schema[i].type=='2' %}
-                			<ul style="list-style-type:none">
-                				<li>
-                					<input type="radio" name="ques_{{i}}.ans" value="1"/>
-                					True
-                				</li>
-                				<li>
-                					<input type="radio" name="ques_{{i}}.ans" value="0"/>
-                					False
-                				</li>
-                			</ul>
-                			{% elif schema[i].type=='3' %}
-                			<div class="row">
-                				<div class="col-md-6">
-                					<textarea rows="8" class="form-control" name="ques_{{i}}.ans"></textarea>
-                				</div>
-                			</div>
-                			{% endif %}
                 		</div>
                 	{% endfor %}
                 	</div>
-                	<br/>
-                	<button class="btn btn-success btn-lg" type="submit">
-                		Submit
-                	</button>
+                	<div class="pull-right">
+                    	<button class="btn btn-success btn-lg" type="submit">
+                    		Submit
+                    	</button>
+                	</div>
+                	<button type="button" class="btn btn-primary btn-lg" onclick="window.history.back()">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                    Back
+                    </button>
                 </form>
+                <button onclick="topFunction()" id="topBtn" title="Go to top">
+        	    <i class="fa fa-arrow-up fa-2x" aria-hidden="true"></i>
+        	    </button>
             </div>
             <div class="col-sm-3"></div>
         </div>
     </div>
 </div>
+<script>
+    // Allow user to scroll to the top of the document
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+            document.getElementById("topBtn").style.display = "block";
+        } else {
+            document.getElementById("topBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }
+</script>
 {% endblock %}
