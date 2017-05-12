@@ -23,7 +23,7 @@ for row in cur.fetchall():
 
 db.close()
 
-sg = sendgrid.SendGridAPIClient(apikey='secret')
+sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
 from_email = Email("addictionhelp365@gmail.com")
 to_email = Email("kelly.mark.76@gmail.com")
 subject = "Test subject"
