@@ -1,9 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField,TextAreaField
-from wtforms.ext.sqlalchemy.fields import QuerySelectField
-from wtforms.validators import DataRequired
-from wtforms import PasswordField, StringField, SubmitField, ValidationError
+from wtforms import PasswordField, StringField, SubmitField, ValidationError, TextAreaField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Email, EqualTo
+from flask.ext.wtf.html5 import NumberInput
 
 from ..models import User
 
@@ -43,34 +41,17 @@ class RegistrationForm(FlaskForm):
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('Username is already in use.')
 
+class UpdateAlertsForm(FlaskForm):
 
-"""
-class DepartmentForm(FlaskForm):
+    #  Form to update patient alerts
 
-    #  Form for admin to add or edit a department
-
-    name = StringField('Name', validators=[DataRequired()])
-    description = StringField('Description', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    allow_alerts = BooleanField()
+    days_before_alert = IntegerField(validators=[DataRequired()], widget=NumberInput())
+    #  IntegerField('Telephone', [validators.NumberRange(min=0, max=10)])
 
 
-class RoleForm(FlaskForm):
-
-    #  Form for admin to add or edit a role
-
-    name = StringField('Name', validators=[DataRequired()])
-    description = StringField('Description', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    #  days_before_alert = IntegerField(validators=[DataRequired(), NumberRange(min=0, max=10)])
 
 
-class EmployeeAssignForm(FlaskForm):
+    submit = SubmitField('Update Alerts')
 
-    #  Form for admin to assign departments and roles to employees
-
-    department = QuerySelectField(query_factory=lambda: Department.query.all(),
-                                  get_label="name")
-    role = QuerySelectField(query_factory=lambda: Role.query.all(),
-                            get_label="name")
-    submit = SubmitField('Submit')
-
-"""

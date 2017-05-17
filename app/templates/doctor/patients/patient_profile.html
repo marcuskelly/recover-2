@@ -1,10 +1,36 @@
+{% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html" %}
 {% block title %}Patient Profile{% endblock %}
+{% block head %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  google.charts.load('current', {'packages':['table']});
+  google.charts.setOnLoadCallback(drawTable);
+
+  function drawTable() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Title');
+    data.addColumn('string', 'Subject');
+    data.addColumn('date', 'Date');
+    data.addColumn('string', 'Details');
+
+    data.addRows([
+        {% for ans in ques_ans_list %}
+            ['{{ans.questionnaires.title}}',  '{{ans.questionnaires.subject}}', new Date('{{ans.date}}'), '<a class="btn btn-success btn-sm" href="{{ans.id}}/result">Select</a>'],
+        {% endfor %}
+    ]);
+
+    var table = new google.visualization.Table(document.getElementById('table_div'));
+
+    table.draw(data, {allowHtml: true, showRowNumber: true, width: '100%', height: '100%'});
+
+  } // end drawTable
+</script>
+{% endblock %}
 {% block body %}
 <div class="content-section">
     <div class="container">
         <div class="row">
-            <!--<div class="col-sm-3"></div>-->
             <div class="col-sm-4">
                 <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
@@ -16,7 +42,6 @@
                             <div class="modal-body">
                                 <p>You are about to discharge {{ patient.first_name }} {{ patient.last_name }}, all data for this patient will also be deleted, this procedure is irreversible.</p>
                                 <p>Do you want to proceed?</p>
-                                <p class="debug-url"></p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
@@ -45,19 +70,56 @@
                                     <td> {{ patient.last_name }} </td>
                                   </tr>
                                   <tr>
-                                    <td>Username</td>
+                                    <td>Username:</td>
                                     <td> {{ patient.username }} </td>
                                   </tr>
                                   <tr>
-                                    <td>Email</td>
+                                    <td>Email:</td>
                                     <td><a href="mailto:{{ patient.email }}">{{ patient.email }}</a></td>
                                   </tr>
                                   <tr>
-                                    <td>Date created</td>
+                                    <td>Date created:</td>
                                     <td> {{ patient.confirmed_at.strftime("%c") }} </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Allow Emails:</td>
+                                    {% if patient.allow_email %}
+                                    <td><i class="fa fa-check fa-lg" aria-hidden="true"></i></td>
+                                    {% else %}
+                                    <td><i class="fa fa-close fa-lg" aria-hidden="true"></i></td>
+                                    {% endif %}
+                                  </tr>
+                                  <tr>
+                                    <td>Days Before Email:</td>
+                                    {% if patient.allow_email %}
+                                    <td> {{patient.days_before_email }} </td>
+                                    {% else %}
+                                    <td>NA</td>
+                                    {% endif %}
                                   </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Email settings
+                            <span class="caret"></span></button>
+                            <ul id="email-form" class="dropdown-menu">
+                                <form method="POST">
+                                    <div class="checkbox checkbox-success">
+                                        {% if patient.allow_email %}
+                                            <input id="checkbox" class="styled" type="checkbox" name="allow_alerts" checked>
+                                            {% else %}
+                                            <input id="checkbox" class="styled" type="checkbox" name="allow_alerts">
+                                            {% endif %}
+                                        <label for="checkbox" data-toggle="tooltip" title="Toggle emails on or off">
+                                            <strong>Emails on/off</strong>
+                                        </label>
+                                    </div>
+                                    <input type="number" name="days_before_alert" value="{{patient.days_before_email }}" min="1" max="14" data-toggle="tooltip" title="Number of days between 1 and 14" required>
+                                    Days
+                                    <button class="btn btn-default btn-sm" type="submit">Update</button>
+                                </form>
+                            </ul>
                         </div>
                     </div>
                     <div class="panel-footer">
@@ -77,30 +139,9 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">Patient Report</h3>
                     </div>
-                    <div class="panel-body" style="padding:0;">
+                    <div class="panel-body" style="padding:0 0 5px 0;">
                     {% if ques_ans_list %}
-                        <div style="overflow-x:auto;">
-                            <table class="table table-striped table-bordered">
-                              <thead>
-                                <tr>
-                                  <th> Title </th>
-                                  <th> Subject </th>
-                                  <th> Date </th>
-                                  <th> Details </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                        {% for ans in ques_ans_list %}
-                                <tr>
-                                  <td> {{ans.questionnaires.title}} </td>
-                                  <td> {{ans.questionnaires.subject}} </td>
-                                  <td> {{ans.date.strftime("%c")}} </td>
-                                  <td><a class="btn btn-success btn-sm" href="{{ans.id}}/result">Select</a></td>
-                                </tr>
-                        {% endfor %}
-                              </tbody>
-                            </table>
-                        </div>
+                        <div id="table_div"></div>
                     {% else %}
                         <h3 class="text-center"> This patients has not answered any questionnaires yet. </h3>
                     {% endif %}
@@ -111,10 +152,9 @@
     </div>
 </div>
 <script>
+    // This function is for the confirmation modal
     $('#confirm-delete').on('show.bs.modal', function(e) {
         $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
-
-        $('.debug-url').html('Delete URL: <strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
     });
 </script>
 {% endblock %}

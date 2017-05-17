@@ -1,17 +1,13 @@
-from flask import g, request, abort, flash, redirect, render_template, url_for, session
+from flask import g, request, abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 from datetime import datetime
-
-import os
-
-import sendgrid
-from sendgrid.helpers.mail import *
+import pickle
+from sqlalchemy import and_
 
 from . import doctor
 from .. import db
 from ..models import User, Questionnaire, QuesAnswer, ProbAnswer, Release
-from forms import CreateQuestionnaireForm, RegistrationForm
-import pickle
+from forms import CreateQuestionnaireForm, RegistrationForm, UpdateAlertsForm
 
 
 def check_doctor():
@@ -20,21 +16,26 @@ def check_doctor():
         abort(403)
 
 
-# Patient Views
-
+"""
+    This route is for the Doctor to view patients,
+    if the registration form is submitted, a new patient is
+    added to the database
+"""
 @doctor.route('/patients', methods=['GET', 'POST'])
 @login_required
 def list_patients():
 
     check_doctor()
 
-    """
-    List all patients for the current doctor
-    """
+    #  List all patients for the current doctor
     patients = User.query.filter_by(doctor_id=current_user.id)
 
+    #  Create a registration form
     form = RegistrationForm()
+
+    #  If the form validates when submitted
     if form.validate_on_submit():
+        #  Populate a patient object from the form
         patient = User(email=form.email.data,
                             username=form.username.data,
                             first_name=form.first_name.data,
@@ -42,37 +43,59 @@ def list_patients():
                             password=form.password.data,
                             is_doctor=False,
                             doctor_id=current_user.id)
-
         # add patient to the database
         db.session.add(patient)
         db.session.commit()
         flash('You have successfully added a patient.', 'success')
-
-        # redirect to the login page
+        # redirect to the patient page
         return redirect(url_for('doctor.list_patients'))
-
     return render_template('doctor/patients/patients.html',
                             patients=patients,
                             form=form,
                             title='Patients')
 
-
+"""
+    This view is for a Doctor to delete a patient,
+    first a check is done to see if the patient has answered
+    any questionnaires. The route takes the patient id as a parameter
+"""
 @doctor.route('/patients/<int:p_id>/remove', methods=['GET', 'POST'])
 @login_required
 def remove_patient(p_id):
 
     check_doctor()
 
+    # Get the patient record
     patient = User.query.get_or_404(p_id)
+
+    # Check if patient has answered any questionnaires
+    ques_answers = QuesAnswer.query.filter_by(user_id=p_id).first()
+
+    #  If the patient has answered questionnaires
+    if ques_answers is not None:
+
+        #  Get the patients answers
+        prob_answers = ProbAnswer.query.filter_by(ques_ans_id=ques_answers.id).all()
+
+        #  Delete each answer
+        for o in prob_answers:
+            db.session.delete(o)
+
+        # Delete the record from the ques_answers table
+        db.session.delete(ques_answers)
+
+    # Delete the patient
     db.session.delete(patient)
+
     db.session.commit()
-
     flash('You have successfully removed a patient.', 'success')
-
     return redirect(url_for('doctor.list_patients'))
 
-
-
+"""
+    This route is for the Doctor to view a patients profile.
+    A form allows the Doctor to update email settings.
+    The route takes the patient id as a parameter
+"""
 @doctor.route('/patients/<int:p_id>/profile', methods=['GET', 'POST'])
 @login_required
 def patient_profile(p_id):
@@ -80,20 +103,47 @@ def patient_profile(p_id):
     check_doctor()
 
     patient = User.query.get(p_id)
+
+    #  Create a form for alert settings
+    form = UpdateAlertsForm()
+
+    #  If the form is submitted
+    if request.method == 'POST':
+        #  Populate the patient object
+        patient.allow_email=form.allow_alerts.data
+        patient.days_before_email=form.days_before_alert.data
+        #  Update the patient email settings
+        db.session.add(patient)
+        db.session.commit()
+
+        flash('Alerts Updated.', 'info')
+        return redirect(url_for('doctor.patient_profile',p_id=patient.id))
+
+    #  Populate the form with data from the database
+    form.allow_alerts.data = patient.allow_email
+    form.days_before_alert.data = patient.days_before_email
+
+    #  To store the patient's answers
     ques_answered = []
     ques_ans = {}
+    #  Loop through the patients answers, and add them to a list
     for qa in patient.quesanswers:
         ques_ans[qa.ques_id] = qa
         ques_answered.append(ques_ans[qa.ques_id])
 
+    #  Reverse the list
     ques_answered_desc = list(reversed(ques_answered))
 
     return render_template('doctor/patients/patient_profile.html',
                             patient=patient,
-                            ques_ans_list = ques_answered_desc,
+                            ques_ans_list = ques_answered,
+                            form=form,
                             title='Patient Profile')
 
-
+"""
+    This route allows the Doctor to view the results of a questionnaire.
+    The route takes two parameters, the patient id and the questionnaire id
+"""
 @doctor.route('/patients/<int:p_id>/<int:q_id>/result', methods=['GET', 'POST'])
 @login_required
 def patient_ques_result(p_id, q_id):
@@ -101,10 +151,18 @@ def patient_ques_result(p_id, q_id):
     check_doctor()
 
     patient = User.query.get(p_id)
-    q = Questionnaire.query.get_or_404(35)
+    #  Get the questionnaire
+    q = Questionnaire.query.first()
     date =  QuesAnswer.query.filter_by(id=q_id).first()
+    #  Get the patient's answers
     answers = ProbAnswer.query.filter_by(ques_ans_id=q_id)
+    #  Get the questions
     schema = pickle.loads(q.schema)
+    
+    yes_count = ProbAnswer.query.filter(and_(ProbAnswer.ques_ans_id==q_id, ProbAnswer.ans==0)).count()
+    #  total_yes = ProbAnswer.query.filter(and_(ProbAnswer.doctor_id==patient.doctor_id, ProbAnswer.ans==0)).count()
+    #  total_no = ProbAnswer.query.filter(and_(ProbAnswer.doctor_id==patient.doctor_id, ProbAnswer.ans==1)).count()
+    no_count = ProbAnswer.query.filter(and_(ProbAnswer.ques_ans_id==q_id, ProbAnswer.ans==1)).count()
 
     return render_template('doctor/patients/patient_result.html',
                             g = g,
@@ -115,36 +173,30 @@ def patient_ques_result(p_id, q_id):
                             description = q.description,
                             patient = patient,
                             answers = answers,
-                            date = date)
+                            date = date,
+                            yes_count = yes_count,
+                            no_count = no_count)
 
 
-
-# Notification Views
-
-@doctor.route('/notifications')
+"""
+    This route is for the Doctor to preview the questionnaire
+"""
+@doctor.route('/questionnaire/preview')
 @login_required
-def list_notifications():
-    """
-    List all notifications
-    """
-    check_doctor()
+def preview():
 
-    return render_template('doctor/notifications/notifications.html',
-                            title='Notifications')
+    #  Get the questionnaire
+    q = Questionnaire.query.first()
+    #  Get the questions
+    schema = pickle.loads(q.schema)
 
-
-#  Questionnaire views
-
-@doctor.route('/questionnaires')
-@login_required
-def list_questionnaires():
-
-    check_doctor()
-
-    questionnaires = Questionnaire.query.all()
-    return render_template('doctor/questionnaire/questionnaire.html',
-                            questionnaires=questionnaires,
-                            title='Questionnaires')
+    return render_template('doctor/questionnaire/questionnaire_preview.html',
+            g = g,
+            id = q.id,
+            schema = schema,
+            title = q.title,
+            subject = q.subject,
+            description = q.description)
 
 
 @doctor.route('/questionnaires/create', methods = ['GET', 'POST'])
@@ -242,10 +294,7 @@ def create_question(q_id):
 
         security = get_security()
         dumped_security = pickle.dumps(security, protocol = 2)
-        release = Release(ques_id = q_id,
-            start_time =datetime.now(),
-            security = dumped_security,
-            is_closed = False)
+        release = Release(ques_id = q_id)
         db.session.add(release)
         db.session.commit()
         flash('You have successfully created the questionnaire.', 'success')
@@ -254,283 +303,3 @@ def create_question(q_id):
 
     return render_template('doctor/questionnaire/questionnaire_create_question.html',
                             title='Create question')
-
-
-@doctor.route('/questionnaire/preview')
-@login_required
-def preview():
-    q = Questionnaire.query.get_or_404(35)
-
-    schema = pickle.loads(q.schema)
-    return render_template('doctor/questionnaire/questionnaire_preview.html',
-            g = g,
-            id = q.id,
-            schema = schema,
-            title = q.title,
-            subject = q.subject,
-            description = q.description)
-
-
-
-# Mail send test
-
-@doctor.route("/mail")
-@login_required
-def send_mail():
-
-    sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
-    from_email = Email("addictionhelp365@gmail.com")
-    to_email = Email("c00198041@itcarlow.ie")
-    subject = "Test subject"
-    content = Content("text/plain", "If you are reading this.. It worked!!!!")
-    mail = Mail(from_email, subject, to_email, content)
-    response = sg.client.mail.send.post(request_body=mail.get())
-    print(response.status_code)
-    print(response.body)
-    print(response.headers)
-
-    """
-    msg = Message("Hello",
-                  recipients=["kelly.mark.76@gmail.com"])
-
-    mail.send(msg)
-    """
-    return "sent"
-
-
-"""
-# Department Views
-
-
-@doctor.route('/departments', methods=['GET', 'POST'])
-@login_required
-def list_departments():
-
-    #  List all departments
-
-    check_admin()
-
-    departments = Department.query.all()
-
-    return render_template('doctor/departments/departments.html',
-                           departments=departments, title="Departments")
-
-
-@doctor.route('/departments/add', methods=['GET', 'POST'])
-@login_required
-def add_department():
-
-    #  Add a department to the database
-
-    check_admin()
-
-    add_department = True
-
-    form = DepartmentForm()
-    if form.validate_on_submit():
-        department = Department(name=form.name.data,
-                                description=form.description.data)
-        try:
-            # add department to the database
-            db.session.add(department)
-            db.session.commit()
-            flash('You have successfully added a new department.')
-        except:
-            # in case department name already exists
-            flash('Error: department name already exists.')
-
-        # redirect to departments page
-        return redirect(url_for('doctor.list_departments'))
-
-    # load department template
-    return render_template('doctor/departments/department.html', action="Add",
-                           add_department=add_department, form=form,
-                           title="Add Department")
-
-
-@doctor.route('/departments/edit/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_department(id):
-
-    #  Edit a department
-
-    check_admin()
-
-    add_department = False
-
-    department = Department.query.get_or_404(id)
-    form = DepartmentForm(obj=department)
-    if form.validate_on_submit():
-        department.name = form.name.data
-        department.description = form.description.data
-        db.session.commit()
-        flash('You have successfully edited the department.')
-
-        # redirect to the departments page
-        return redirect(url_for('doctor.list_departments'))
-
-    form.description.data = department.description
-    form.name.data = department.name
-    return render_template('doctor/departments/department.html', action="Edit",
-                           add_department=add_department, form=form,
-                           department=department, title="Edit Department")
-
-
-@doctor.route('/departments/delete/<int:id>', methods=['GET', 'POST'])
-@login_required
-def delete_department(id):
-
-    #  Delete a department from the database
-
-    check_admin()
-
-    department = Department.query.get_or_404(id)
-    db.session.delete(department)
-    db.session.commit()
-    flash('You have successfully deleted the department.')
-
-    # redirect to the departments page
-    return redirect(url_for('doctor.list_departments'))
-
-    return render_template(title="Delete Department")
-
-
-# Role Views
-
-
-@doctor.route('/roles')
-@login_required
-def list_roles():
-    check_admin()
-
-    #  List all roles
-
-    roles = Role.query.all()
-    return render_template('doctor/roles/roles.html',
-                           roles=roles, title='Roles')
-
-
-@doctor.route('/roles/add', methods=['GET', 'POST'])
-@login_required
-def add_role():
-
-    # Add a role to the database
-
-    check_admin()
-
-    add_role = True
-
-    form = RoleForm()
-    if form.validate_on_submit():
-        role = Role(name=form.name.data,
-                    description=form.description.data)
-
-        try:
-            # add role to the database
-            db.session.add(role)
-            db.session.commit()
-            flash('You have successfully added a new role.')
-        except:
-            # in case role name already exists
-            flash('Error: role name already exists.')
-
-        # redirect to the roles page
-        return redirect(url_for('doctor.list_roles'))
-
-    # load role template
-    return render_template('doctor/roles/role.html', add_role=add_role,
-                           form=form, title='Add Role')
-
-
-@doctor.route('/roles/edit/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_role(id):
-
-    #  Edit a role
-
-    check_admin()
-
-    add_role = False
-
-    role = Role.query.get_or_404(id)
-    form = RoleForm(obj=role)
-    if form.validate_on_submit():
-        role.name = form.name.data
-        role.description = form.description.data
-        db.session.add(role)
-        db.session.commit()
-        flash('You have successfully edited the role.')
-
-        # redirect to the roles page
-        return redirect(url_for('doctor.list_roles'))
-
-    form.description.data = role.description
-    form.name.data = role.name
-    return render_template('doctor/roles/role.html', add_role=add_role,
-                           form=form, title="Edit Role")
-
-
-@doctor.route('/roles/delete/<int:id>', methods=['GET', 'POST'])
-@login_required
-def delete_role(id):
-
-    #  Delete a role from the database
-
-    check_admin()
-
-    role = Role.query.get_or_404(id)
-    db.session.delete(role)
-    db.session.commit()
-    flash('You have successfully deleted the role.')
-
-    # redirect to the roles page
-    return redirect(url_for('doctor.list_roles'))
-
-    return render_template(title="Delete Role")
-
-
-# Employee Views
-
-@doctor.route('/employees')
-@login_required
-def list_employees():
-
-    #  List all employees
-
-    check_admin()
-
-    employees = Employee.query.all()
-    return render_template('doctor/employees/employees.html',
-                           employees=employees, title='Employees')
-
-
-@doctor.route('/employees/assign/<int:id>', methods=['GET', 'POST'])
-@login_required
-def assign_employee(id):
-
-    #  Assign a department and a role to an employee
-
-    check_admin()
-
-    employee = Employee.query.get_or_404(id)
-
-    # prevent admin from being assigned a department or role
-    if employee.is_admin:
-        abort(403)
-
-    form = EmployeeAssignForm(obj=employee)
-    if form.validate_on_submit():
-        employee.department = form.department.data
-        employee.role = form.role.data
-        db.session.add(employee)
-        db.session.commit()
-        flash('You have successfully assigned a department and role.')
-
-        # redirect to the roles page
-        return redirect(url_for('doctor.list_employees'))
-
-    return render_template('doctor/employees/employee.html',
-                           employee=employee, form=form,
-                           title='Assign Employee')
-
-"""

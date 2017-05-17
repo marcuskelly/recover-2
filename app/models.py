@@ -16,18 +16,14 @@ class User(UserMixin, db.Model):
     first_name = db.Column(db.String(60), index=True)
     last_name = db.Column(db.String(60), index=True)
     password_hash = db.Column(db.String(128))
-
-
-    questionnaires = db.relationship("Questionnaire", backref='users', lazy='dynamic')
-    quesanswers = db.relationship("QuesAnswer", backref='users', lazy='dynamic')
-
-    #  department_id = db.Column(db.Integer, db.ForeignKey('departments.id'))
-    #  role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    is_admin = db.Column(db.Boolean, default=True)
+    allow_email = db.Column(db.Boolean, default=True)
+    days_before_email = db.Column(db.Integer, default=3)
     is_doctor = db.Column(db.Boolean, default=True)
     doctor_id = db.Column(db.Integer)
     confirmed_at = db.Column(db.DateTime(), default=datetime.now())
-    last_log_in = db.Column(db.DateTime(), default=datetime.now())
+
+    questionnaires = db.relationship("Questionnaire", backref='users', lazy='dynamic')
+    quesanswers = db.relationship("QuesAnswer", backref='users', lazy='dynamic')
 
 
     @property
@@ -83,24 +79,9 @@ class Questionnaire(db.Model):
     create_time = db.Column(db.DateTime)
     schema = db.Column(db.PickleType)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    is_ban = db.Column(db.Boolean)
 
     releases = db.relationship("Release", backref='questionnaires', lazy='dynamic')
     quesanswers = db.relationship("QuesAnswer", backref='questionnaires', lazy='dynamic')
-
-    def get_status(self):
-        if self.is_ban:
-            return 'Banned'
-        releases = list(self.releases)
-        if not releases:
-            return 'In creating'
-        release = releases[-1]
-        if release.get_status():
-            if len(releases) > 1:
-                return 'In reopening'
-            else:
-                return 'In releasing'
-        return 'Closed'
 
     def get_last_release(self):
         releases = list(self.releases)
@@ -116,17 +97,6 @@ class Release(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     ques_id = db.Column(db.Integer, db.ForeignKey('questionnaires.id'))
-    start_time = db.Column(db.DateTime)
-    end_time = db.Column(db.DateTime)
-    security = db.Column(db.PickleType)
-    is_closed = db.Column(db.Boolean)
-
-    def get_status(self):
-        current_time = datetime.now()
-        if not self.is_closed:
-            return True
-        else:
-            return False
 
 
 class QuesAnswer(db.Model):
@@ -136,7 +106,6 @@ class QuesAnswer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ques_id = db.Column(db.Integer, db.ForeignKey('questionnaires.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    ip = db.Column(db.String(50))
     date = db.Column(db.DateTime)
 
     probanswers = db.relationship("ProbAnswer", backref='ques_answers', lazy='dynamic')
@@ -150,43 +119,5 @@ class ProbAnswer(db.Model):
     ques_ans_id = db.Column(db.Integer, db.ForeignKey('ques_answers.id'))
     prob_id = db.Column(db.Integer)
     ans = db.Column(db.Text)
+    doctor_id = db.Column(db.Integer)
 
-
-
-
-
-"""
-class Department(db.Model):
-
-    #  Create a Department table
-
-
-    __tablename__ = 'departments'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(60), unique=True)
-    description = db.Column(db.String(200))
-    employees = db.relationship('Employee', backref='department',
-                                lazy='dynamic')
-
-    def __repr__(self):
-        return '<Department: {}>'.format(self.name)
-
-
-class Role(db.Model):
-
-    #  Create a Role table
-
-
-    __tablename__ = 'roles'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(60), unique=True)
-    description = db.Column(db.String(200))
-    employees = db.relationship('Employee', backref='role',
-                                lazy='dynamic')
-
-    def __repr__(self):
-        return '<Role: {}>'.format(self.name)
-
-"""

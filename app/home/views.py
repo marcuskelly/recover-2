@@ -1,6 +1,5 @@
-from flask import abort, render_template, flash, redirect, url_for, request
+from flask import abort, render_template, flash, redirect, url_for
 from flask_login import current_user, login_required
-import os
 import random
 
 from . import home
@@ -130,11 +129,7 @@ def get_quote():
     with open('/home/recover/recover-2/app/quotes.txt') as quote_file:
         for line in quote_file:
             quote = line.strip()
-            #  quote = line.split('.')
             print(quote)
             quotes.append(quote)
 
     return random.choice(quotes)
-
-
-

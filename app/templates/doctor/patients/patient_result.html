@@ -1,13 +1,69 @@
 {% extends "base.html" %}
 {% block title %}Patient Result{% endblock %}
 {% block head %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/new_questionnaire.js') }}"></script>
+<!-- <script type="text/javascript" src="{{ url_for('static', filename='js/new_questionnaire.js') }}"></script> -->
+
+<!--Load the AJAX API-->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+
+    // Load the Visualization API and the corechart package.
+    google.charts.load('current', {'packages':['corechart']});
+
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.charts.setOnLoadCallback(drawChart);
+
+    // Callback that creates and populates a data table,
+    // instantiates the pie chart, passes in the data and
+    // draws it.
+    function drawChart() {
+
+    // Create the data table.
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Answer');
+    data.addColumn('number', 'Total');
+    data.addRows([
+      ['Yes  {{ yes_count }}', {{ yes_count }}],
+      ['No  {{ no_count }}', {{ no_count }}]
+    ]);
+
+    // Set chart options
+    var piechart_options = {title:'Total result of questionnaire',
+               colors: ['#ff3333','#00cc00'],
+               is3D: true,
+               height:325};
+
+    // Instantiate and draw our chart, passing in some options.
+    var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+    chart.draw(data, piechart_options);
+    }
+    // To make Google charts responsive
+    $(window).resize(function(){
+      drawChart();
+    });
+</script>
 {% endblock %}
 {% block body %}
 <div class="content-section">
     <div class="container">
         <div class="row">
-            <div class="col-sm-3"></div>
+            <div class="col-sm-5">
+                <div class="panel panel-primary" style="padding:0;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Overview of Answers</h3>
+                    </div>
+                    <div class="panel-body chart_div_result">
+                        <!--Div that will hold the bar chart-->
+                        <div id="chart_div"></div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-primary" onclick="window.history.back()">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                        Back
+                        </button>
+                    </div>
+                </div>
+            </div>
             <div class="col-sm-6">
                 <h1>[{{subject}}] {{title}}</h1>
                 <h3>Patient Name: {{ patient.first_name }} {{ patient.last_name }}</h3>
@@ -31,9 +87,29 @@
                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
                 Back
                 </button>
+                <button onclick="topFunction()" id="topBtn" title="Go to top">
+        	    <i class="fa fa-arrow-up fa-2x" aria-hidden="true"></i>
+        	    </button>
             </div>
-            <div class="col-sm-3"></div>
+            <div class="col-sm-2"></div>
         </div>
     </div>
 </div>
+<script>
+    // For the "Back to top" button
+    window.onscroll = function() {scrollFunction()};
+    function scrollFunction() {
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+            document.getElementById("topBtn").style.display = "block";
+        } else {
+            document.getElementById("topBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }
+</script>
 {% endblock %}

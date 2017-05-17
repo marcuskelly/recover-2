@@ -1,47 +1,56 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block head %}
-    <!--Load the AJAX API-->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
+<!--Load the AJAX API-->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
 
-      // Load Charts and the corechart and barchart packages.
-      google.charts.load('current', {'packages':['corechart']});
+  // Load Charts and the corechart and barchart packages.
+  google.charts.load('current', {'packages':['corechart']});
 
-      // Draw the pie chart and bar chart when Charts is loaded.
-      google.charts.setOnLoadCallback(drawChart);
+  // Draw the pie chart and bar chart when Charts is loaded.
+  google.charts.setOnLoadCallback(drawChart);
 
-      function drawChart() {
+  function drawChart() {
 
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Question');
-        data.addColumn('number', 'Answers');
-        data.addRows([
-          ['A', 3],
-          ['B', 4],
-          ['C', 10],
-          ['D', 1],
-          ['E', 2]
-        ]);
+    var data1 = new google.visualization.DataTable();
+    data1.addColumn('string', 'Answers');
+    data1.addColumn('number', 'Total');
+    data1.addRows([
+      ['Yes', 3],
+      ['No', 4]
+    ]);
 
-        var piechart_options = {title:'Pie Chart: Total questions answered',
-                       colors: ['#00ff00','#7cff00','#fff600','#ff7b00','#ff0000'],
-                       height:300};
-        var piechart = new google.visualization.PieChart(document.getElementById('piechart_div'));
-        piechart.draw(data, piechart_options);
+    var data2 = new google.visualization.DataTable();
+    data2.addColumn('string', 'Question');
+    data2.addColumn('number', 'Answers');
+    data2.addRows([
+      ['A', 3],
+      ['B', 4],
+      ['C', 10],
+      ['D', 1],
+    ]);
 
-        var barchart_options = {title:'Barchart:  Total questions answered',
-                       height:300,
-                       legend: 'none'};
-        var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
-        barchart.draw(data, barchart_options);
-      }
+    var piechart_options = {title:'Pie Chart: Total questions answered',
+                   colors: ['#ff3333','#00cc00'],
+                   is3D: true,
+                   height:325};
+    var piechart = new google.visualization.PieChart(document.getElementById('piechart_div'));
+    piechart.draw(data1, piechart_options);
 
-      $(window).resize(function(){
-          drawChart();
-        });
+    var barchart_options = {title:'Barchart:  Total questions answered',
+                   colors: ['#337AB7','#5CB85C','#F0AD4E','#D9534F'],
+                   height:325,
+                   legend: 'none'};
+    var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
+    barchart.draw(data2, barchart_options);
+  }
 
-    </script>
+  $(window).resize(function(){
+      drawChart();
+    });
+
+</script>
 {% endblock %}
 {% block body %}
 <div class="container">
@@ -137,23 +146,24 @@
             </div>
         </div>
     </div>
-    <!-- /.row -->
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-primary">
-                <!--Div that will hold the pie chart-->
-                <div id="piechart_div" class="chart"></div>
+                <div class="panel-body chart_div_result">
+                    <!--Div that will hold the pie chart-->
+                    <div id="piechart_div" class="chart"></div>
+                </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="panel panel-primary">
-                <!--Div that will hold the bar chart-->
-                <div id="barchart_div" class="chart"></div>
+                <div class="panel-body chart_div_result">
+                   <!--Div that will hold the bar chart-->
+                    <div id="barchart_div" class="chart"></div>
+                </div>
             </div>
         </div>
-        <!-- /.col-md-6 -->
     </div>
-    <!-- /.row -->
     <br/><br/>
 </div>
 {% endblock %}
