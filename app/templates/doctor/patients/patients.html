@@ -1,3 +1,7 @@
+<!--
+    Author: Mark Kelly
+    Author: Danielle Gorman
+-->
 {% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html" %}
 {% block title %}Patients{% endblock %}
@@ -8,23 +12,37 @@ function drawTable() {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'First name');
     data.addColumn('string', 'Last Name');
-    data.addColumn('string', 'Email');
+    data.addColumn('string', 'Status');
     data.addColumn('string', 'Profile');
 
     data.addRows([
         {% for patient in patients %}
-            ['{{ patient.first_name }}',  '{{ patient.last_name }}', '{{ patient.email }}', '<a class="btn btn-success btn-sm" href="patients/{{ patient.id }}/profile" data-toggle="tooltip" title="View this patients profile">Select</a>'],
+            ['{{ patient.first_name }}',  '{{ patient.last_name }}', '{{ patient.status }}', '<a class="btn btn-success btn-sm" href="patients/{{ patient.id }}/profile" data-toggle="tooltip" title="View this patients profile">Select</a>'],
         {% endfor %}
     ]);
 
     var dashboard = new google.visualization.Dashboard(document.querySelector('#dashboard'));
-
+    // For the First Name filter
     var stringFilter = new google.visualization.ControlWrapper({
         controlType: 'StringFilter',
         containerId: 'string_filter_div',
         options: {
             filterColumnIndex: 0
         }
+    });
+    // For the status filter
+    var categoryPicker = new google.visualization.ControlWrapper({
+      controlType: 'CategoryFilter',
+      containerId: 'categoryPicker_div',
+      options: {
+        filterColumnIndex: 2,
+        ui: {
+          labelStacking: 'horizontal',
+          label: 'Status Selection:',
+          allowTyping: false,
+          allowMultiple: false
+        }
+      }
     });
 
     var table = new google.visualization.ChartWrapper({
@@ -38,7 +56,7 @@ function drawTable() {
         }
     });
 
-    dashboard.bind([stringFilter], [table]);
+    dashboard.bind([stringFilter, categoryPicker], [table]);
     dashboard.draw(data);
 }
 google.charts.load('visualization', '1', {packages:['controls'], callback: drawTable});
@@ -68,7 +86,14 @@ google.charts.load('visualization', '1', {packages:['controls'], callback: drawT
                     <div class="panel-body" style="padding:5px;">
                     {% if patients %}
                         <div id="dashboard">
-                            <div id="string_filter_div"></div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div id="string_filter_div"></div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div id="categoryPicker_div" class="pull-right"></div>
+                                </div>
+                            </div>
                             <div id="table_div"></div>
                         </div>
                     {% else %}

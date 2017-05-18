@@ -1,3 +1,7 @@
+<!--
+    Author: Mark Kelly
+    Author: Danielle Gorman
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -64,7 +68,7 @@
           </div>
         </div>
     </nav>
-
+    <!-- Get the flash messages and put them in a toastr alert -->
     {%- with messages = get_flashed_messages(with_categories=true) -%}
         {% if messages %}
          {% for category, message in messages %}
@@ -140,5 +144,4 @@
     	$('.nav > li > a[href="'+pathname+'"]').parent().addClass('active');
     })
 </script>
-
 </html>

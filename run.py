@@ -1,3 +1,7 @@
+"""
+    Author: Mark Kelly
+    Author: Danielle Gorman
+"""
 import os
 
 from app import create_app

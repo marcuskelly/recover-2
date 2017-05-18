@@ -1,60 +1,56 @@
+<!--
+    Author: Mark Kelly
+    Author: Danielle Gorman
+-->
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block head %}
 <!--Load the AJAX API-->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
-
-  // Load Charts and the corechart and barchart packages.
-  google.charts.load('current', {'packages':['corechart']});
-
-  // Draw the pie chart and bar chart when Charts is loaded.
-  google.charts.setOnLoadCallback(drawChart);
-
-  function drawChart() {
-
+    // Load Charts and the corechart and barchart packages.
+    google.charts.load('current', {'packages':['corechart']});
+    // Draw the pie chart and bar chart when Charts is loaded.
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+    // Populate the Piechart with data from the database
     var data1 = new google.visualization.DataTable();
     data1.addColumn('string', 'Answers');
     data1.addColumn('number', 'Total');
     data1.addRows([
-      ['Yes', 3],
-      ['No', 4]
+      ['Yes {{ total_yes }}', {{ total_yes }}],
+      ['No {{ total_no }}', {{ total_no }}]
     ]);
-
-    var data2 = new google.visualization.DataTable();
-    data2.addColumn('string', 'Question');
-    data2.addColumn('number', 'Answers');
-    data2.addRows([
-      ['A', 3],
-      ['B', 4],
-      ['C', 10],
-      ['D', 1],
-    ]);
-
-    var piechart_options = {title:'Pie Chart: Total questions answered',
+    // Populate the Barchart with data from the database
+    var data2 = google.visualization.arrayToDataTable([
+         ['Patients', 'Total', { role: 'style' }],
+         ['Total', {{ total_patients }}, '#337AB7'],
+         ['Recovering', {{ total_recovering }}, '#5CB85C'],
+         ['At Risk', {{ total_at_risk }}, '#F0AD4E'],
+         ['Alerts', {{ total_alerts }}, '#D9534F' ],
+      ]);
+    // Total questions answered by all patients Piechart
+    var piechart_options = {title:'Total questions answered by all patients',
                    colors: ['#ff3333','#00cc00'],
                    is3D: true,
                    height:325};
     var piechart = new google.visualization.PieChart(document.getElementById('piechart_div'));
     piechart.draw(data1, piechart_options);
-
-    var barchart_options = {title:'Barchart:  Total questions answered',
-                   colors: ['#337AB7','#5CB85C','#F0AD4E','#D9534F'],
+    // Patient overview Barchart
+    var barchart_options = {title:'Patient Overview',
                    height:325,
                    legend: 'none'};
     var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
     barchart.draw(data2, barchart_options);
-  }
-
-  $(window).resize(function(){
+    }
+    // to make Google charts responsive
+    $(window).resize(function(){
       drawChart();
     });
-
 </script>
 {% endblock %}
 {% block body %}
 <div class="container">
-    <!-- Page Content -->
     <br><br><br>
     <div class="row">
         <div class="col-lg-3 col-md-6">
@@ -65,7 +61,7 @@
                             <i class="fa fa-users fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">{{ number_of_patients }}</div>
+                            <div class="huge">{{ total_patients }}</div>
                             <div>Patients</div>
                         </div>
                     </div>
@@ -87,12 +83,12 @@
                             <i class="fa fa-smile-o fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">12</div>
+                            <div class="huge">{{ total_recovering }}</div>
                             <div>Recovering Patients</div>
                         </div>
                     </div>
                 </div>
-                <a href="#">
+                <a href="{{ url_for('doctor.list_patients') }}">
                     <div class="panel-footer">
                         <span class="pull-left">View Details</span>
                         <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -109,7 +105,7 @@
                             <i class="fa fa-meh-o fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">11</div>
+                            <div class="huge">{{ total_at_risk }}</div>
                             <div>Patients at Risk</div>
                         </div>
                     </div>
@@ -131,12 +127,12 @@
                             <i class="fa fa-support fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">3</div>
+                            <div class="huge">{{ total_alerts }}</div>
                             <div>Patient Alerts</div>
                         </div>
                     </div>
                 </div>
-                <a href="#">
+                <a href="{{ url_for('doctor.list_patients') }}">
                     <div class="panel-footer">
                         <span class="pull-left">View Details</span>
                         <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>

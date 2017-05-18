@@ -1,3 +1,8 @@
+"""
+    Author: Mark Kelly
+    Author: Danielle Gorman
+"""
+
 import sys
 import sendgrid
 from sendgrid.helpers.mail import *
@@ -11,6 +16,7 @@ if path not in sys.path:
 sg = sendgrid.SendGridAPIClient(apikey='secret')
 from_email = Email("addictionhelp365@gmail.com")
 
+#  Connect to the database
 db = MySQLdb.connect(host="recover.mysql.pythonanywhere-services.com",
                      user="recover",
                      passwd="secret",
@@ -20,19 +26,10 @@ db = MySQLdb.connect(host="recover.mysql.pythonanywhere-services.com",
 cur = db.cursor() #  This cursor is for the patient details
 cur2 = db.cursor() #  This cursor is for the Doctor details
 
+#  Get all users, for a Doctor id, that have "Allow Email" on, where the number of days since a questionnare is greater than the allowed days.
 cur.execute("select users.email, users.first_name, users.last_name, users.doctor_id, users.days_before_email, datediff(now(),max(ques_answers.date)), max(ques_answers.date), datediff(now(),users.confirmed_at) from users left join ques_answers on users.id=ques_answers.user_id where not users.is_doctor and users.allow_email group by users.email;")
 
 for row in cur.fetchall():
-    print('--------------------------')
-    print row[0]
-    print row[1]
-    print row[2]
-    print row[3]
-    print row[4]
-    print row[5]
-    print row[6]
-    print row[7]
-
     email = row[0]
     first_name = row[1]
     last_name = row[2]
@@ -47,9 +44,6 @@ for row in cur.fetchall():
     for row2 in cur2.fetchall():
         doctor_email = row2[0]
         doctor_first_name = row2[1]
-
-    print(doctor_email)
-    print(doctor_first_name)
 
     # Check how many days before a new patient answers their first questionnaire
     if days_since_questionnaire is None and confirmed_at >= days_before_email:
@@ -83,7 +77,5 @@ for row in cur.fetchall():
         content = Content("text/plain", "Dear " + doctor_first_name + ",\r\n\r\nIt's been " + str(days_since_questionnaire) + " days since " + first_name + "'s last questionnaire.\r\n\r\n\r\nRegards,\r\n\r\nRecover Team." )
         mail = Mail(from_email, subject, to_email, content)
         sg.client.mail.send.post(request_body=mail.get())
-    else:
-        print('not >=')
 
 db.close()

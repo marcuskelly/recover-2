@@ -273,10 +273,9 @@ p.copyright {
   min-width: 50%;
   min-height: 50%;
 }
-#welcome {
+.welcome {
     z-index: 10;
     position: absolute;
-
 }
 
 .intro-message {

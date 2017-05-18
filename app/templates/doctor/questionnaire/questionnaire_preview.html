@@ -1,8 +1,11 @@
+<!--
+    Author: Mark Kelly
+    Author: Danielle Gorman
+-->
 {% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html" %}
 {% block title %}Preview Questionnaire{% endblock %}
 {% block head %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/new_questionnaire.js') }}"></script>
 {% endblock %}
 {% block body %}
 <div class="content-section">
@@ -53,7 +56,6 @@
             document.getElementById("topBtn").style.display = "none";
         }
     }
-
     // When the user clicks on the button, scroll to the top of the document
     function topFunction() {
         document.body.scrollTop = 0;

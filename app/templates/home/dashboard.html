@@ -1,3 +1,7 @@
+<!--
+    Author: Mark Kelly
+    Author: Danielle Gorman
+-->
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block body %}
@@ -6,7 +10,24 @@
         <div class="row">
             <div class="col-sm-3"></div>
             <div class="col-sm-6">
-                <br><br><h3 class="text-primary"> {{ quote }} </h3>
+                <br><h2 class="text-primary"> {{ quote }} </h2>
+                <hr style="border:0;background-color:#357ebd;height:1px;"><br>
+                <h4>
+                    <b>Remember,</b> you are not alone.. Many people have overcome
+                    addiction and are now enjoying a better life.
+                    It can be done. You too can do it. Stay strong and take it
+                    day by day.
+                </h4><br>
+                <h4>
+                    Please visit <a href="https://www.addictionsandrecovery.org/"
+                    data-toggle="tooltip" title="Click here to visit ADDICTIONS and RECOVER.org">
+                    ADDICTIONS and RECOVERY.org</a> for tons of useful information to
+                    help you in your battle against addiction. They have a very good
+                    <a href="https://www.addictionsandrecovery.org/relapse-prevention.htm"
+                    data-toggle="tooltip" title="Click here to learn more about the Relapse Prevention Plan">
+                    Relapse Prevention Plan</a> to help you spot the early warning
+                    signs of a relapse and give you the tools to prevent it.
+                </h4>
             </div>
             <div class="col-sm-3"></div>
         </div>

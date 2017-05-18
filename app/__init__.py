@@ -1,6 +1,10 @@
+"""
+    Author: Mark Kelly
+    Author: Danielle Gorman
+"""
+
 import os
 
-# third-party imports
 from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
@@ -9,7 +13,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from flask_sslify import SSLify
 
-# local imports
 from config import app_config
 
 db = SQLAlchemy()
@@ -20,24 +23,14 @@ mail = Mail()
 def create_app(config_name):
     if os.getenv('FLASK_CONFIG') == "production":
         app = Flask(__name__)
+        #  To make app use https
         sslify = SSLify(app)
-        #  app.config.from_object(__name__)
         app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
-        app.config.update(dict(
-            MAIL_SERVER = 'smtp.gmail.com',
-            MAIL_PORT = 587,
-            MAIL_USE_SSL = False,
-            MAIL_USE_TLS = True,
-            MAIL_USERNAME = os.environ.get('MAIL_USERNAME'),
-            MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD'),
-            MAIL_DEFAULT_SENDER = '"Recover" <noreply@gmail.com>'
-        ))
         app.config.update(
             SECRET_KEY=os.getenv('SECRET_KEY'),
             SQLALCHEMY_DATABASE_URI=os.getenv('SQLALCHEMY_DATABASE_URI')
         )
         mail.init_app(app)
-        #  mail = Mail(app)
     else:
         app = Flask(__name__, instance_relative_config=True)
         app.config.from_object(app_config[config_name])

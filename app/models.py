@@ -1,11 +1,17 @@
+"""
+    Author: Mark Kelly
+    Author: Danielle Gorman
+"""
+
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import DateTime
 from datetime import datetime
 
 from app import db, login_manager
 
-
+"""
+    This table is for the users
+"""
 class User(UserMixin, db.Model):
 
     __tablename__ = 'users'
@@ -21,6 +27,7 @@ class User(UserMixin, db.Model):
     is_doctor = db.Column(db.Boolean, default=True)
     doctor_id = db.Column(db.Integer)
     confirmed_at = db.Column(db.DateTime(), default=datetime.now())
+    status = db.Column(db.String(50), default='Recovering')
 
     questionnaires = db.relationship("Questionnaire", backref='users', lazy='dynamic')
     quesanswers = db.relationship("QuesAnswer", backref='users', lazy='dynamic')
@@ -67,7 +74,9 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
+"""
+    This table is for the questionnaires
+"""
 class Questionnaire(db.Model):
 
     __tablename__ = 'questionnaires'
@@ -90,7 +99,9 @@ class Questionnaire(db.Model):
         else:
             return releases[-1]
 
-
+"""
+    This table is for the latest release of a questionnaire
+"""
 class Release(db.Model):
 
     __tablename__ = 'releases'
@@ -98,7 +109,9 @@ class Release(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ques_id = db.Column(db.Integer, db.ForeignKey('questionnaires.id'))
 
-
+"""
+    This table is a map between questionnaires table and probanswers table
+"""
 class QuesAnswer(db.Model):
 
     __tablename__ = 'ques_answers'
@@ -111,6 +124,9 @@ class QuesAnswer(db.Model):
     probanswers = db.relationship("ProbAnswer", backref='ques_answers', lazy='dynamic')
 
 
+"""
+    This table is for the answers
+"""
 class ProbAnswer(db.Model):
 
     __tablename__ = 'prob_answers'

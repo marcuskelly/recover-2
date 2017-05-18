@@ -1,14 +1,18 @@
+"""
+    Author: Mark Kelly
+    Author: Danielle Gorman
+"""
+
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, SubmitField, ValidationError
 from wtforms.validators import DataRequired, Email, EqualTo
 
 from ..models import User
 
-
-class RegistrationForm(FlaskForm):
-    """
+"""
     Form for doctors to create new account
-    """
+"""
+class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('Last Name', validators=[DataRequired()])
@@ -28,11 +32,11 @@ class RegistrationForm(FlaskForm):
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('Username is already in use.')
 
-
-class LoginForm(FlaskForm):
-    """
+"""
     Form for users to login
-    """
+"""
+class LoginForm(FlaskForm):
+
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')

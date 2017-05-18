@@ -1,3 +1,7 @@
+<!--
+    Author: Mark Kelly
+    Author: Danielle Gorman
+-->
 {% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html" %}
 {% block title %}Patient Profile{% endblock %}
@@ -61,6 +65,10 @@
                         <div style="overflow-x:auto;">
                             <table class="table table-user-information">
                                 <tbody>
+                                  <tr>
+                                    <td>Status:</td>
+                                    <td> {{ patient.status }} </td>
+                                  </tr>
                                   <tr>
                                     <td>First name:</td>
                                     <td> {{ patient.first_name }} </td>

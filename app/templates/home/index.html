@@ -1,3 +1,7 @@
+<!--
+    Author: Mark Kelly
+    Author: Danielle Gorman
+-->
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block head %}
@@ -5,12 +9,23 @@
 {% block body %}
     <div class="container">
         <div class="row">
-            <div class="col-sm-12 text-center">
-                <br><br><h1 id="welcome">Welcome to Recover</h1>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <br><br><br><br><br>
+                <p class="welcome">
+                    <strong>Welcome to Recover</strong>, a place where Doctors
+                    can register for an account, create a group of patients, and
+                    visualise the health of each patient on their journey to
+                    recover from drug addiction.<br><br>
+                    Once a Doctor registers a patient, the patient can then login
+                    and answer set questionnaires about their addiction.
+                </p>
             </div>
+            <div class="col-sm-4"></div>
         </div>
     </div>
     <div id="bg">
       <img src="/static/img/home-bg.jpg" class="img-responsive" alt="Home background image">
+      <p>test</p>
     </div>
 {% endblock %}
